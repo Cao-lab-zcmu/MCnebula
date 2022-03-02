@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # History files
 .Rhistory
 .Rapp.history
@@ -37,3 +38,6 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+=======
+inst/doc
+>>>>>>> a84e79d... initial submit

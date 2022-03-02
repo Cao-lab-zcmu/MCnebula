@@ -1,0 +1,40 @@
+Package: MCnebula
+Title: MCnebula algorithm integration in R
+Version: 0.0.0.9000
+Authors@R: 
+    person(given="Lichuang", family="Huang", email="1970612193@qq.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Facilitate MS/MS spectrum annotation and visualization.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    data.table,
+    dplyr,
+    ggplot2,
+    ggraph,
+    ggsci,
+    grid,
+    igraph,
+    MSnbase,
+    pbapply,
+    reshape2,
+    stringr,
+    svglite,
+    tidygraph,
+    tidyr
+Suggests: 
+    rsvg,
+    ChemmineOB,
+    ChemmineR,
+    grImport2,
+    ggimage,
+    gridExtra,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)
+LazyData: true
