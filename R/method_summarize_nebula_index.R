@@ -5,9 +5,8 @@
 #' @param ppcp_threshold PARAM_DESCRIPTION, Default: 0.5
 #' @param min_possess PARAM_DESCRIPTION, Default: 10
 #' @param max_possess_pct PARAM_DESCRIPTION, Default: 0.2
-#' @param identical_merge PARAM_DESCRIPTION, Default: T
 #' @param identical_factor PARAM_DESCRIPTION, Default: 0.8
-#' @param merge_allowed_hierarchy PARAM_DESCRIPTION, Default: c(top_level = 4)
+#' @param filter_identical PARAM_DESCRIPTION, Default: c(top_hierarchy = 4)
 #' @param ... PARAM_DESCRIPTION
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
@@ -35,10 +34,13 @@ method_summarize_nebula_index <-
            min_possess = 10, 
            ## max percentage of compounds allowed exist in a child-nebula
            max_possess_pct = 0.2, 
-           identical_merge = T,
+           ## identical filter
+           filter_identical = c("top_hierarchy" = 4), 
            identical_factor = 0.8,
-           ## if set to 4 (class), the level of or below this hierarchy (e.g., subclass) will perform merge
-           merge_allowed_hierarchy = c("top_level" = 4), 
+           ## in the nebula, if too many structure score is too low, filter the nebula.
+           filter_via_struc_score = "tanimotoSimilarity",
+           struc_score_cutoff = 0.4,
+           min_reached_pct = 0.7,
            ...
            ){
     classes <- data.table::rbindlist(nebula_class) %>%
@@ -63,24 +65,38 @@ method_summarize_nebula_index <-
       dplyr::select(relativeIndex, name, hierarchy) %>%
       merge(index_df, by = "relativeIndex", all.y = T, sort = F)
     ## ---------------------------------------------------------------------- 
-    if(identical_merge == T){
+    if(is.na(identical_factor) == F){
       ## filter identical or similar classes
       ## enumerate combination
       class_for_merge <- index_df %>% 
-        dplyr::filter(hierarchy >= merge_allowed_hierarchy[["top_level"]]) %>%
+        dplyr::filter(hierarchy >= filter_identical[["top_hierarchy"]]) %>%
         dplyr::distinct(relativeIndex) %>%
         unlist() %>%
         combn(m = 2) %>%
         t() %>%
         data.frame()
       cat("## Method part: identical_filter\n")
-      discard = pbapply(class_for_merge, 1, identical_filter,
-                      identical_factor = identical_factor,
-                      ...) %>%
+      discard = pbapply::pbapply(class_for_merge, 1, identical_filter,
+                                 identical_factor = identical_factor,
+                                 ...) %>%
         unlist() %>%
         unique()
+      index_df <- index_df[!index_df$relativeIndex %in% discard, ]
     }
-    index_df <- index_df[!index_df$relativeIndex %in% discard, ]
+    ## ---------------------------------------------------------------------- 
+    if(is.na(filter_via_struc_score) == F){
+      df <- merge(index_df, .MCn.structure_set[, c(".id", filter_via_struc_score)],
+                  by = ".id", all.x = T)
+      list <- by_group_as_list(df, "relativeIndex")
+      cat("## Method part: fun_filter_via_struc_score\n")
+      select_index <- pbapply::pblapply(list, fun_filter_via_struc_score,
+                                        filter_via_struc_score,
+                                        struc_score_cutoff,
+                                        min_reached_pct)
+      select_index <- unlist(select_index)
+      index_df <- dplyr::filter(index_df, relativeIndex %in% all_of(select_index))
+    }
+    ## ---------------------------------------------------------------------- 
     ## cluster id in each classes
     nebula_index <- dplyr::group_by(index_df, relativeIndex)
     return(nebula_index)
@@ -115,6 +131,22 @@ identical_filter <-
     if(p_x >= identical_factor & p_y >= identical_factor){
       idn = ifelse(length(x) >= length(y), couple[2], couple[1])
       return(idn)
+    }else{
+      return()
+    }
+  }
+fun_filter_via_struc_score <- 
+  function(
+           df,
+           score = "tanimotoSimilarity",
+           cutoff = 0.4,
+           min_reached_pct = 0.5
+           ){
+    x <- df[[score]]
+    df <- dplyr::mutate(df, reach = ifelse(x >= cutoff & is.na(x) == F, T, F))
+    check <- prop.table(table(df[["reach"]]))
+    if(check[["TRUE"]] >= min_reached_pct){
+      return(df[1, ]$relativeIndex)
     }else{
       return()
     }

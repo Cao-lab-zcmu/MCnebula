@@ -53,11 +53,8 @@ batch_mode_nodes <-
     if(plot_ratio == T){
       ratio_df <- dplyr::mutate(ratio_df, .id = as.character(.id))
       ratio_df <- merge(dplyr::select(meta_ppcp, .id), ratio_df, all.x = T, by = ".id", sort = F)
-      assign("envir_nebula", environment(), parent.env(environment()))
       ## get list data
-      ratio_df_list <- lapply(ratio_df$".id", by_group_for_list,
-                              df = get("ratio_df", envir = get("envir_nebula")),
-                              col = ".id")
+      ratio_df_list <- by_group_as_list(ratio_df, ".id")
     }else{
       ratio_df_list <- rep(0, nrow(meta_ppcp))
     }

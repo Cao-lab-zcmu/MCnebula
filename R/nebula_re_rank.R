@@ -52,12 +52,7 @@ nebula_re_rank <-
     }
     ## ---------------------------------------------------------------------- 
     ## catch file
-    ## due to the return data type of mapply, lapply is used instead
-    ## first, as list
-    assign("envir_nebula", environment(), envir = parent.env(environment()))
-    formula_adduct <- lapply(formula_adduct$".id", by_group_for_list,
-                             col = ".id",
-                             df = get("formula_adduct", envir = get("envir_nebula")))
+    formula_adduct <- by_group_as_list(formula_adduct, ".id")
     ## then, use lapply match file
     cat("## netbula_re_rank: get_structure\n")
     structure_set <- pbapply::pblapply(formula_adduct, df_get_structure,

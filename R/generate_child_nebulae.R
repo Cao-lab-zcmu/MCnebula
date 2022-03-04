@@ -36,7 +36,7 @@ generate_child_nebulae <-
     ## get names of all classes
     names <- unique(nebula_index$name)
     ## for using lapply, first, trans the data.frame into list
-    nebula_index <- lapply(unique(nebula_index$relativeIndex), by_group_for_list)
+    nebula_index <- by_group_as_list(nebula_index, "relativeIndex")
     ## push names
     names(nebula_index) <- names
     ## facet parent nebula
@@ -50,15 +50,6 @@ generate_child_nebulae <-
                       max_edges = max_edges,
                       ...)
     cat("[INFO] MCnebula Job Done: generate_child_nebulae\n")
-  }
-by_group_for_list <-
-  function(
-           x,
-           df = get("nebula_index", envir = get("envir_nebula")),
-           col = "relativeIndex"
-           ){
-    df <- df[which(df[[col]] == x),]
-    return(df)
   }
 separate_nebula <-
   function(

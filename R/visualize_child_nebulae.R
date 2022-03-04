@@ -68,9 +68,7 @@ visualize_child_nebulae <-
                     row = (seq - col)/cols + 1)
     ## as list
     nebula_index <- graph_anno$nebula_index
-    graph_anno <- lapply(nebula_index, by_group_for_list,
-                         df = get("graph_anno", envir = get("envir_meta")), 
-                         col = "nebula_index")
+    graph_anno <- by_group_as_list(graph_anno, "nebula_index")
     ## re-order the graph list according to annotation
     graph_list <- lapply(nebula_index,
                          function(x){
