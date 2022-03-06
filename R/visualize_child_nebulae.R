@@ -44,7 +44,6 @@ visualize_child_nebulae <-
       data.table::rbindlist(idcol = T) %>%
       dplyr::select(.id, name) %>%
       dplyr::rename(vis_class = name)
-    assign("envir_meta", environment(), envir = parent.env(environment()))
     ## draw network via ggplot, and print into grid palette
     ## number of child_nebulae
     n = length(graph_list)
@@ -83,6 +82,7 @@ visualize_child_nebulae <-
                       graph_list, ## graph list
                       graph_anno, ## graph annotation
                       MoreArgs = list( ## args
+                                      class = metadata,
                                       layout = layout,
                                       ...
                                       ))
@@ -93,8 +93,8 @@ grid_child_nebula <-
   function(
            graph,
            anno,
+           class,
            layout = "fr",
-           class = get("metadata", envir = get("envir_meta")),
            title_palette = .MCn.palette_label,
            print_into = T,
            save_layout_df = NULL,

@@ -59,12 +59,13 @@ get_ppcp <-
     if(exists(".MCn.class_tree_list") == F){
       build_classes_tree_list(class_index = class_index)
     }
-    ## get the environment name for lapply function to invoke data
-    assign(paste0("envir_", key_id), environment(), envir = parent.env(environment()))
     ## merge with meta table, and filter
     ppcp <- lapply(.MCn.class_tree_list, merge_class_ppcp,
                    ## parameter
-                   key_id = key_id, filter = filter, filter_threshold = filter_threshold)
+                   key_id = key_id,
+                   values = ppcp,
+                   filter = filter,
+                   filter_threshold = filter_threshold)
     return(ppcp)
   }
 ## a small function to get data of ppcp
@@ -86,10 +87,10 @@ escape_ch <- function(x){
 merge_class_ppcp <-
   function(
            class,
+           values,
            filter = T,
            filter_threshold = 0.1,
            key_id = NULL,
-           values = get("ppcp", envir = get(paste0("envir_", key_id))),
            filter_col = "V1"
            ){
     df <- merge(class, values, all.x = T, by = "relativeIndex", sort = F)

@@ -38,7 +38,8 @@ method_summarize_nebula_index <-
            filter_identical = c("top_hierarchy" = 4), 
            identical_factor = 0.8,
            ## in the nebula, if too many structure score is too low, filter the nebula.
-           filter_via_struc_score = "tanimotoSimilarity",
+           ## or NA
+           filter_via_struc_score = "tanimotoSimilarity", 
            struc_score_cutoff = 0.4,
            min_reached_pct = 0.7,
            ...
@@ -47,11 +48,10 @@ method_summarize_nebula_index <-
       dplyr::distinct(relativeIndex)
     ## get classes
     classes <- classes$relativeIndex
-    ## environment for lapply function
-    assign("envir_classes", environment(), envir = parent.env(environment()))
     cat("## Method part: class_retrieve\n")
     index_list <- pbapply::pblapply(ppcp_dataset, class_retrieve,
-                         ...)
+                                    the_relativeIndex = classes,
+                                    ...)
     index_df <- data.table::rbindlist(index_list, idcol = T)
     ## ---------------------------------------------------------------------- 
     ## filter via max_possess and min_possess
@@ -59,6 +59,7 @@ method_summarize_nebula_index <-
     stat <- stat[which(stat >= min_possess & stat <= max_possess_pct * length(unique(index_df$".id")))]
     index_df <- index_df %>%
       dplyr::filter(relativeIndex %in% names(stat))
+    ## ------------------------------------- 
     ## gather with classes annotation
     index_df <- data.table::rbindlist(.MCn.class_tree_list, idcol = T) %>%
       dplyr::rename(hierarchy = .id) %>%
@@ -75,8 +76,10 @@ method_summarize_nebula_index <-
         combn(m = 2) %>%
         t() %>%
         data.frame()
+      ## ------------------------------------- 
       cat("## Method part: identical_filter\n")
       discard = pbapply::pbapply(class_for_merge, 1, identical_filter,
+                                 index_df = data.table(index_df),
                                  identical_factor = identical_factor,
                                  ...) %>%
         unlist() %>%
@@ -88,6 +91,7 @@ method_summarize_nebula_index <-
       df <- merge(index_df, .MCn.structure_set[, c(".id", filter_via_struc_score)],
                   by = ".id", all.x = T)
       list <- by_group_as_list(df, "relativeIndex")
+      ## ------------------------------------- 
       cat("## Method part: fun_filter_via_struc_score\n")
       select_index <- pbapply::pblapply(list, fun_filter_via_struc_score,
                                         filter_via_struc_score,
@@ -104,7 +108,7 @@ method_summarize_nebula_index <-
 class_retrieve <-
   function(
            data,
-           the_relativeIndex = get("classes", envir = get("envir_classes")),
+           the_relativeIndex,
            ppcp_threshold = 0.5
            ){
     ##
@@ -115,19 +119,21 @@ class_retrieve <-
 identical_filter <- 
   function(
            couple,
-           index_df = get("index_df", envir = get("envir_classes")),
+           index_df,
            identical_factor = 0.7
            ){
-    ##
-    x = unique(index_df[which(index_df$relativeIndex %in% couple[1]), ]$".id")
-    y = unique(index_df[which(index_df$relativeIndex %in% couple[2]), ]$".id")
+    ## index_df is a data.table project
+    x = unique(index_df[relativeIndex %in% couple[1], ]$".id")
+    y = unique(index_df[relativeIndex %in% couple[2], ]$".id")
     p_x = table(x %in% y)
     p_y = table(y %in% x)
+    ## ------------------------------------- 
     if("TRUE" %in% names(p_x) == F | "TRUE" %in% names(p_y) == F){
       return()
     }
     p_x = prop.table(p_x)[["TRUE"]]
     p_y = prop.table(p_y)[["TRUE"]]
+    ## ------------------------------------- 
     if(p_x >= identical_factor & p_y >= identical_factor){
       idn = ifelse(length(x) >= length(y), couple[2], couple[1])
       return(idn)
@@ -143,8 +149,12 @@ fun_filter_via_struc_score <-
            min_reached_pct = 0.5
            ){
     x <- df[[score]]
-    df <- dplyr::mutate(df, reach = ifelse(x >= cutoff & is.na(x) == F, T, F))
+    df <- dplyr::mutate(df, reach = ifelse(x >= cutoff &
+                                           is.na(x) == F,
+                                         T, F))
     check <- prop.table(table(df[["reach"]]))
+    if("TRUE" %in% names(check) == F)
+      return()
     if(check[["TRUE"]] >= min_reached_pct){
       return(df[1, ]$relativeIndex)
     }else{

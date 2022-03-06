@@ -64,8 +64,7 @@ annotate_child_nebulae <-
     ## push environment name into parent.env, let some data could be catch in sub-environment via 'get' function
     assign("envir_meta", environment(), envir = parent.env(environment()))
     ## gather data for annotation (nebula_name, hierarchy)
-    hierarchy <- dplyr::filter(.MCn.nebula_index, name == nebula_name) %>%
-      head(n = 1)
+    hierarchy <- head(dplyr::filter(.MCn.nebula_index, name == nebula_name), n = 1)
     anno = c(nebula_index = nebula_name, hierarchy = hierarchy$hierarchy)
     ## ------------------------------------------------------------------------
     ## set a environment to store layout data

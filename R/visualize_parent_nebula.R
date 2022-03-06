@@ -104,6 +104,7 @@ base_vis_p_nebula <-
       ggraph::scale_edge_width(range = c(0.1, 0.7)) + 
       ggplot2::guides(fill = guide_legend(override.aes = list(size = 5))) +
       ggplot2::labs(fill="Class", size="Tanimoto similarity") +
+      ## ------------------------------------- 
       ggplot2::theme_grey() +
       ggplot2::theme(
             text = element_text(family = "Times"),

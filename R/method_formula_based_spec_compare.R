@@ -128,11 +128,10 @@ method_formula_based_spec_compare <-
       cat("## Method part: load compound info file\n")
       meta_dir_filter$compound_mass <- pbapply::pblapply(info_path, get_precursor_mass) %>%
         unlist()
-      ## transmit the environment name to parent.env for lapply
-      assign("envir_spectra", environment(), envir = parent.env(environment()))
       ## compute mass difference
       cat("## Method part: diff_precursor_mass: sum:", nrow(combn), "\n")
-      combn[["mass_diff"]] <- pbapply::pbapply(combn[,1:2], 1, precursor_mass_diff)
+      combn[["mass_diff"]] <- pbapply::pbapply(combn[,1:2], 1, precursor_mass_diff,
+                                               df = data.table::data.table(meta_dir_filter))
     }
     combn <- dplyr::as_tibble(combn)
     return(combn)
@@ -167,17 +166,22 @@ couple_ms2_compare <-
     return(simi)
   }
 get_precursor_mass <-
-  function(path){
+  function(
+           path
+           ){
     df <- read_tsv(path)
-    mass <- df[which(df$index == "ionMass"), 2]
+    mass <- df[index == "ionMass", 2]
     mass <- as.numeric(mass)
     return(mass)
   }
 precursor_mass_diff <-
-  function(x, df = get("meta_dir_filter", envir = get("envir_spectra"))){
+  function(
+           x,
+           df
+           ){
     ##
-    x1 = df[which(df$".id" == x[1]), "compound_mass"]
-    x2 = df[which(df$".id" == x[2]), "compound_mass"]
+    x1 = df[.id == x[1], "compound_mass", with = F]
+    x2 = df[.id == x[2], "compound_mass", with = F]
     x = x2 - x1
     return(x)
   }

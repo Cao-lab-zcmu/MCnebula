@@ -59,6 +59,7 @@ collate_ppcp <-
              ## these files need to be check and filter (whether exist)
              ## note that some formula is no fingerprint computed
              ppcp = file.exists(full.name))
+      ## ------------------------------------- 
       meta_dir_filter <- dplyr::filter(meta_dir, ppcp == T)
       cat("## STAT of PPCP dataset:",
           paste0(nrow(meta_dir_filter), "(formula with PPCP)", "/", nrow(meta_dir), "(all formula)"), 
@@ -75,6 +76,7 @@ collate_ppcp <-
       metadata <- data.table::rbindlist(.MCn.class_tree_list, idcol = T) %>%
         dplyr::rename(hierarchy = .id)
       .MCn.class_tree_data <<- dplyr::as_tibble(metadata)
+      ## ------------------------------------- 
       ## transmit environment
       assign("envir_meta", environment(), envir = parent.env(environment()))
       ## get nebula classes
