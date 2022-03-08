@@ -180,8 +180,8 @@ precursor_mass_diff <-
            df
            ){
     ##
-    x1 = df[.id == x[1], "compound_mass", with = F]
-    x2 = df[.id == x[2], "compound_mass", with = F]
+    x1 = df[.id == x[1], ]$"compound_mass"
+    x2 = df[.id == x[2], ]$"compound_mass"
     x = x2 - x1
     return(x)
   }
