@@ -36,7 +36,7 @@ method_summarize_nebula_index <-
            max_possess_pct = 0.2, 
            ## identical filter
            filter_identical = c("top_hierarchy" = 4), 
-           identical_factor = 0.8,
+           identical_factor = 0.7,
            ## in the nebula, if too many structure score is too low, filter the nebula.
            ## or NA
            filter_via_struc_score = "tanimotoSimilarity", 
@@ -64,7 +64,8 @@ method_summarize_nebula_index <-
     index_df <- data.table::rbindlist(.MCn.class_tree_list, idcol = T) %>%
       dplyr::rename(hierarchy = .id) %>%
       dplyr::select(relativeIndex, name, hierarchy) %>%
-      merge(index_df, by = "relativeIndex", all.y = T, sort = F)
+      merge(index_df, by = "relativeIndex", all.y = T, sort = F) %>%
+      data.table::data.table()
     ## ---------------------------------------------------------------------- 
     if(is.na(identical_factor) == F){
       ## filter identical or similar classes
@@ -72,19 +73,16 @@ method_summarize_nebula_index <-
       class_for_merge <- index_df %>% 
         dplyr::filter(hierarchy >= filter_identical[["top_hierarchy"]]) %>%
         dplyr::distinct(relativeIndex) %>%
-        unlist() %>%
-        combn(m = 2) %>%
-        t() %>%
-        data.frame()
+        unlist() %>% combn(m = 2) %>%
+        t() %>% data.frame()
       ## ------------------------------------- 
       cat("## Method part: identical_filter\n")
       discard = pbapply::pbapply(class_for_merge, 1, identical_filter,
-                                 index_df = data.table(index_df),
+                                 index_df = index_df,
                                  identical_factor = identical_factor,
                                  ...) %>%
-        unlist() %>%
-        unique()
-      index_df <- index_df[!index_df$relativeIndex %in% discard, ]
+        unlist() %>% unique()
+      index_df <- dplyr::filter(index_df, !relativeIndex %in% discard)
     }
     ## ---------------------------------------------------------------------- 
     if(is.na(filter_via_struc_score) == F){

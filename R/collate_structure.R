@@ -60,18 +60,21 @@ collate_structure <-
                     ...)
   ## -----------------------------------------------------------------
   ## structure collate
-  structure_dataset <- eapply(structure_cache, data.table) %>% 
-    data.table::rbindlist(idcol=T)
+  structure_dataset <- eapply(structure_cache, data.table) 
+  structure_dataset <- data.table::rbindlist(structure_dataset, idcol = T)
   .MCn.structure_set <<- dplyr::mutate(structure_dataset,
                                        tanimotoSimilarity = as.numeric(tanimotoSimilarity)) %>%
     dplyr::as_tibble()
+  ## write output
   if(write_output == T){
     write_tsv( structure_dataset, paste0(output, "/", collate_method, ".structure.tsv"))
   }
+  ## ------------------------------------- 
   ## formula_adduct collate
   formula_adduct_set <- eapply(formula_cache, data.table) %>%
     data.table::rbindlist(idcol = T)
   .MCn.formula_set <<- dplyr::filter(formula_adduct_set, is.na(precursorFormula) == F)
+  ## write output
   if(write_picked_formula_adduct == T){
     write_tsv(formula_adduct_set, paste0(output, "/", collate_method, ".tsv"))
   }
