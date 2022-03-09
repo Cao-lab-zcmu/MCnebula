@@ -81,7 +81,8 @@ method_pick_formula_excellent <-
     df_sz <- mutate(structure_df[.id %in% sz, ], use_zodiac = F)
     ## ------------------ 
     formula_adduct <- dplyr::bind_rows(df_fz, df_sz)
-    formula_adduct <- dplyr::as_tibble(formula_adduct)
+    formula_adduct <- dplyr::as_tibble(formula_adduct) %>%
+      dplyr::select(.id, colnames(.))
     ## ----------------------------------------------------------------------
     return(formula_adduct)
   }
@@ -118,6 +119,9 @@ mutate_get_structure <-
     }
     max <- max(structure_df$"CSI:FingerIDScore")
     structure_df <- structure_df[`CSI:FingerIDScore` == max, c("molecularFormula", "adduct"), with = F]
+    if(nrow(structure_df) > 1){
+      structure_df <- head(structure_df, n = 1)
+    }
     structure_df$".id" <- key_id
     return(structure_df)
   }
