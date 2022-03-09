@@ -6,7 +6,6 @@
 #' @param structure_method PARAM_DESCRIPTION, Default: 'top_score'
 #' @param order PARAM_DESCRIPTION, Default: T
 #' @param return_row PARAM_DESCRIPTION, Default: 1:10
-#' @param path PARAM_DESCRIPTION, Default: .MCn.sirius
 #' @param as_tibble PARAM_DESCRIPTION, Default: F
 #' @param ... PARAM_DESCRIPTION
 #' @return OUTPUT_DESCRIPTION
@@ -32,11 +31,10 @@ get_structure <-
            structure_method = "top_score", # or top_similarity
            order = T,
            return_row = 1:10, # or "all"
-           path = .MCn.sirius,
            as_tibble = F,
            ...
            ){
-    path <- list.files(path = path, pattern = paste0("*_", key_id, "$"), full.names = T)
+    path <- list.files(path = .MCn.sirius, pattern = paste0("*_", key_id, "$"), full.names = T)
     files <- list.files(paste0(path, "/fingerid"),
                         pattern = paste0(precursor_formula, "(.*)", escape_ch(adduct), "(.*).tsv$"),
                         full.names = F)

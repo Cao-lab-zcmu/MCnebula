@@ -1,11 +1,7 @@
 #' @title FUNCTION_TITLE
 #' @description FUNCTION_DESCRIPTION
 #' @param dirs PARAM_DESCRIPTION, Default: 'all'
-#' @param path PARAM_DESCRIPTION, Default: .MCn.sirius
-#' @param output PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)
 #' @param write_output PARAM_DESCRIPTION, Default: T
-#' @param write_picked_formula_adduct PARAM_DESCRIPTION, Default: T
-#' @param collate_method PARAM_DESCRIPTION, Default: 'method_pick_formula_excellent'
 #' @param ... PARAM_DESCRIPTION
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
@@ -27,58 +23,49 @@
 collate_structure <- 
   function(
            dirs = "all",
-           path = .MCn.sirius,
-           output = paste0(.MCn.output, "/", .MCn.results),
            write_output = T,
-           write_picked_formula_adduct = T,
-           collate_method = "method_pick_formula_excellent", # "top_score", "top_similarity", "top_zodiac_score"
            ...
            ){
   cat( paste0("[INFO] MCnebula run: collate_structure\n") )
-  ## -----------------------------------------------------------------
+  ## ---------------------------------------------------------------------- 
   ## check dirs
   cat("## collate_structure: check_dir\n")
   if(dirs == "all"){
-    dirs <- list.files(path = path, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
-    check <- pbapply::pbsapply(dirs, check_dir) %>% unname
+    dirs <- list.files(path = .MCn.sirius, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
+    check <- pbapply::pbsapply(dirs, check_dir) %>%
+      unname()
   }else{
-    check <- pbapply::pbsapply(dirs, check_dir) %>% unname
+    check <- pbapply::pbsapply(dirs, check_dir) %>%
+      unname()
   }
   dirs <- dirs[which(check == T)]
-  ## build a new envir to place data
-  formula_cache <- new.env()
-  structure_cache <- new.env()
-  ## -----------------------------------------------------------------
-  cat("## collate_structure:", paste0(collate_method), "\n")
-  method_fun <- match.fun(collate_method)
-  ## method
-  pbapply::pblapply(dirs, method_fun,
-                    return_formula = F,
-                    ## the data are placed into cache envir
-                    formula_cache = formula_cache,
-                    structure_cache = structure_cache,
-                    ...)
-  ## -----------------------------------------------------------------
+  ## ---------------------------------------------------------------------- 
+  cat("## collate_structure: method_pick_formula_excellent\n")
+  formula_set <- method_pick_formula_excellent(dir = dirs, ...)
+  ## ------------------------------------- 
+  ## set as global var
+  .MCn.formula_set <<- formula_set
+  ## ---------------------------------------------------------------------- 
   ## structure collate
-  structure_dataset <- eapply(structure_cache, data.table) 
-  structure_dataset <- data.table::rbindlist(structure_dataset, idcol = T)
-  .MCn.structure_set <<- dplyr::mutate(structure_dataset,
-                                       tanimotoSimilarity = as.numeric(tanimotoSimilarity)) %>%
+  cat("## collate_structure: re-collate structure\n")
+  structure_dataset <- pbapply::pbmapply(mutate2_get_structure,
+                                         formula_set$.id,
+                                         formula_set$precursorFormula,
+                                         formula_set$adduct,
+                                         SIMPLIFY = F)
+  structure_dataset <- data.table::rbindlist(structure_dataset, fill = T) %>%
     dplyr::as_tibble()
+  ## ------------------------------------- 
+  ## set as global var
+  .MCn.structure_set <<- structure_dataset
+  ## ---------------------------------------------------------------------- 
   ## write output
   if(write_output == T){
-    write_tsv( structure_dataset, paste0(output, "/", collate_method, ".structure.tsv"))
+    output = paste0(.MCn.output, "/", .MCn.results)
+    write_tsv(structure_dataset, paste0(output, "/", "method_pick_formula_excellent", ".structure.tsv"))
+    write_tsv(formula_set, paste0(output, "/", "method_pick_formula_excellent", ".tsv"))
   }
-  ## ------------------------------------- 
-  ## formula_adduct collate
-  formula_adduct_set <- eapply(formula_cache, data.table) %>%
-    data.table::rbindlist(idcol = T)
-  .MCn.formula_set <<- dplyr::filter(formula_adduct_set, is.na(precursorFormula) == F)
-  ## write output
-  if(write_picked_formula_adduct == T){
-    write_tsv(formula_adduct_set, paste0(output, "/", collate_method, ".tsv"))
-  }
-  ## -----------------------------------------------------------------
+  ## ---------------------------------------------------------------------- 
   cat( paste0("[INFO] MCnebula Job Done: collate_structure.\n") )
 }
 grep_id <- function(x, sep = "_"){
@@ -95,3 +82,20 @@ check_dir <- function(dir, path = .MCn.sirius, file = "compound.info"){
   }
   return(check)
 }
+mutate2_get_structure <- 
+  function(
+           key_id,
+           formula,
+           adduct
+           ){
+    df <- try(silent = T, get_structure(key_id,
+                                        precursor_formula = formula,
+                                        adduct = adduct,
+                                        return_row = 1))
+    if(class(df)[1] == "try-error"){
+      return()
+    }else{
+      df$".id" <- key_id
+      return(df)
+    }
+  }

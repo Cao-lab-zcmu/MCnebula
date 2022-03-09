@@ -37,6 +37,7 @@ method_summarize_nebula_index <-
            ## identical filter
            filter_identical = c("top_hierarchy" = 4), 
            identical_factor = 0.7,
+           rm_position_describe_class = T,
            ## in the nebula, if too many structure score is too low, filter the nebula.
            ## or NA
            filter_via_struc_score = "tanimotoSimilarity", 
@@ -44,10 +45,13 @@ method_summarize_nebula_index <-
            min_reached_pct = 0.7,
            ...
            ){
-    classes <- data.table::rbindlist(nebula_class) %>%
-      dplyr::distinct(relativeIndex)
+    classes <- data.table::rbindlist(nebula_class)
+    if(rm_position_describe_class == T){
+      classes <- dplyr::filter(classes, !grepl("[0-9]", name))
+    }
+    ## classes is merely a classes index number set
+    classes <- dplyr::distinct(classes, relativeIndex)$relativeIndex
     ## get classes
-    classes <- classes$relativeIndex
     cat("## Method part: class_retrieve\n")
     index_list <- pbapply::pblapply(ppcp_dataset, class_retrieve,
                                     the_relativeIndex = classes,

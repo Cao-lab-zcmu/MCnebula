@@ -1,9 +1,6 @@
 #' @title FUNCTION_TITLE
 #' @description FUNCTION_DESCRIPTION
-#' @param formula_adduct PARAM_DESCRIPTION, Default: .MCn.formula_set
-#' @param path PARAM_DESCRIPTION, Default: .MCn.sirius
 #' @param dirs PARAM_DESCRIPTION, Default: 'all'
-#' @param output PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)
 #' @param write_output PARAM_DESCRIPTION, Default: T
 #' @param nebula_class PARAM_DESCRIPTION, Default: T
 #' @param nebula_index PARAM_DESCRIPTION, Default: T
@@ -27,10 +24,7 @@
 #' @importFrom data.table rbindlist
 collate_ppcp <- 
   function(
-           formula_adduct = .MCn.formula_set,
-           path = .MCn.sirius,
            dirs = "all",
-           output = paste0(.MCn.output, "/", .MCn.results),
            write_output = T,
            nebula_class = T,
            nebula_index = T,
@@ -41,7 +35,7 @@ collate_ppcp <-
     ## check dirs ---- canopus
     cat("## collate_ppcp: check_dir\n")
     if(dirs == "all"){
-      dirs <- list.files(path = path, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
+      dirs <- list.files(path = .MCn.sirius, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
       check <- pbapply::pbsapply(dirs, check_dir, file = "canopus") %>% unname
     }else{
       check <- pbapply::pbsapply(dirs, check_dir, file = "canopus") %>% unname
@@ -52,10 +46,10 @@ collate_ppcp <-
       data.frame() %>%
       dplyr::rename(dir = ".") %>%
       dplyr::mutate(.id = sapply(dir, grep_id)) %>%
-      merge(formula_adduct, by = ".id", all.x = T, sort = F) %>%
+      merge(.MCn.formula_set, by = ".id", all.x = T, sort = F) %>%
       dplyr::mutate(adduct_trans = gsub(" ", "", adduct),
              target = paste0(precursorFormula, "_", adduct_trans, ".fpt"), 
-             full.name = paste0(path, "/", dir, "/", "canopus", "/", target), 
+             full.name = paste0(.MCn.sirius, "/", dir, "/", "canopus", "/", target), 
              ## these files need to be check and filter (whether exist)
              ## note that some formula is no fingerprint computed
              ppcp = file.exists(full.name))
@@ -75,14 +69,16 @@ collate_ppcp <-
       cat("## method_summarize_nebula_class\n")
       metadata <- data.table::rbindlist(.MCn.class_tree_list, idcol = T) %>%
         dplyr::rename(hierarchy = .id)
+      ## ------------------------------------- 
+      ## set as global var
       .MCn.class_tree_data <<- dplyr::as_tibble(metadata)
       ## ------------------------------------- 
-      ## transmit environment
       assign("envir_meta", environment(), envir = parent.env(environment()))
       ## get nebula classes
       nebula_class <- pbapply::pblapply(ppcp_dataset, method_summarize_nebula_class, 
                              class_data_type = "classes_tree_data",
                              ...)
+      ## ------------------------------------- 
       .MCn.nebula_class <<- nebula_class
     }
     ## ---------------------------------------------------------------------- 
@@ -94,6 +90,7 @@ collate_ppcp <-
       .MCn.nebula_index <<- nebula_index
     ## ---------------------------------------------------------------------- 
       if(write_output == T){
+        output = paste0(.MCn.output, "/", .MCn.results)
         write_tsv(nebula_index, file = paste0(output, "/", "nebula_index.tsv"))
       }
     }
