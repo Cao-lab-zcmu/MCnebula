@@ -4,7 +4,6 @@
 #' @param top_n PARAM_DESCRIPTION, Default: 10
 #' @param match_pattern PARAM_DESCRIPTION, Default: c("precursorFormula")
 #' @param collate_factor PARAM_DESCRIPTION, Default: 0.85
-#' @param cluster_method PARAM_DESCRIPTION, Default: 'method_rerank_binning_cluster'
 #' @param revise_MCn_formula_set PARAM_DESCRIPTION, Default: T
 #' @param revise_MCn_structure_set PARAM_DESCRIPTION, Default: T
 #' @param ... PARAM_DESCRIPTION
@@ -33,7 +32,6 @@ nebula_re_rank <-
            top_n = 10,
            match_pattern = c("precursorFormula"), ## or c("precursorFormula", "adduct")
            collate_factor = 0.85,
-           cluster_method = "method_rerank_binning_cluster",
            revise_MCn_formula_set = T,
            revise_MCn_structure_set = T,
            ...
@@ -69,6 +67,7 @@ nebula_re_rank <-
     apset <- sdf2ap(sdfset)
     ## ---------------------------------------------------------------------- 
     ## cluster method
+    cluster_method <- "method_rerank_binning_cluster"
     method_fun <- match.fun(cluster_method)
     meta_rank <- method_fun(apset, ...)
     print(meta_rank)

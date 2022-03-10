@@ -64,7 +64,8 @@ separate_nebula <-
            ){
     id <- unique(df$".id")
     ## get the child nebula name
-    name <- df[1, "name"]
+    ## note that some character in name caused fail to write as file into dir
+    name <- gsub("/", "#", df[1,]$"name")
     nodes <- nodes[nodes$".id" %in% id, ]
     edges <- edges[edges$".id_1" %in% id & edges$".id_2" %in% id, ] 
     ## an edges number cut-off
