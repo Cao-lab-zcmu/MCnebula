@@ -38,7 +38,7 @@ visualize_parent_nebula <-
            write_output = T,
            output = paste0(.MCn.output, "/", .MCn.results),
            layout = "mds",
-           nodes_color = c("hierarchy" = 4), ## default, use superclass as color.
+           nodes_color = c("hierarchy" = 3), ## default, use superclass as color.
            width = 15,
            height = 12,
            return_plot = F,
@@ -87,11 +87,11 @@ visualize_parent_nebula <-
   }
 base_vis_p_nebula <-
   function(
-           nebula,
+           layout_n,
            palette = .MCn.palette,
            ...
            ){
-    p <- ggraph::ggraph(nebula) + 
+    p <- ggraph::ggraph(layout_n) + 
       ggraph::geom_edge_fan(aes(edge_width = similarity), color = "lightblue", show.legend = F) + 
       ggraph::geom_node_point(
                       aes(
