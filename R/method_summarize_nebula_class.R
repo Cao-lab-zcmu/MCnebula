@@ -2,7 +2,7 @@
 #' @description FUNCTION_DESCRIPTION
 #' @param data PARAM_DESCRIPTION
 #' @param ppcp_threshold PARAM_DESCRIPTION, Default: 0.5
-#' @param max_number PARAM_DESCRIPTION, Default: 5
+#' @param max_classes PARAM_DESCRIPTION, Default: 5
 #' @param hierarchy_priority PARAM_DESCRIPTION, Default: c(6, 5, 4, 3)
 #' @param class_data_type PARAM_DESCRIPTION, Default: 'classes_tree_list'
 #' @param ... PARAM_DESCRIPTION
@@ -25,7 +25,7 @@ method_summarize_nebula_class <-
   function(
            data,
            ppcp_threshold = 0.5,
-           max_number = 5,
+           max_classes = NA,
            hierarchy_priority = c(6, 5, 4, 3), ## level 5, subclass, class, superclass
            class_data_type = "classes_tree_list", ## or "classes_tree_data"
            ...
@@ -33,16 +33,17 @@ method_summarize_nebula_class <-
     ## input data 
     if(class_data_type == "classes_tree_list"){
       class_data = .MCn.class_tree_list
-      metadata <- data.table::rbindlist(class_data, idcol = T) %>%
-        dplyr::rename(hierarchy = .id)
+      metadata <- data.table::rbindlist(class_data, idcol = T)
+      metadata <- dplyr::rename(metadata, hierarchy = .id)
     }else if(class_data_type == "classes_tree_data"){
       metadata <- class_data <- get("metadata", envir = get("envir_meta"))
     }
     ## main body
-    df <- dplyr::filter(data, V1 >= ppcp_threshold) %>%
-      merge(metadata[, 1:5], all.x = T, by = "relativeIndex", sort = F) %>%
-      dplyr::filter(hierarchy %in% hierarchy_priority)
-    df <- df[order(factor(df$hierarchy, levels = hierarchy_priority), -df$V1), ] %>%
-      head(n = max_number)
+    df <- dplyr::filter(data, V1 >= ppcp_threshold)
+    df <- merge(df, metadata[, 1:5], all.x = T, by = "relativeIndex", sort = F)
+    df <- dplyr::filter(df, hierarchy %in% hierarchy_priority)
+    df <- df[order(factor(df$hierarchy, levels = hierarchy_priority), -df$V1), ]
+    if(is.na(max_classes) == F)
+      df <- head(df, n = max_classes)
     return(df)
   }

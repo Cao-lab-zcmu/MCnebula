@@ -111,7 +111,8 @@ class_retrieve <-
   function(
            data,
            the_relativeIndex,
-           ppcp_threshold = 0.5
+           ppcp_threshold = 0.5,
+           ...
            ){
     ##
     classes <- the_relativeIndex
@@ -122,7 +123,8 @@ identical_filter <-
   function(
            couple,
            index_df,
-           identical_factor = 0.7
+           identical_factor = 0.7,
+           ...
            ){
     ## index_df is a data.table project
     x = unique(index_df[relativeIndex %in% couple[1], ]$".id")
