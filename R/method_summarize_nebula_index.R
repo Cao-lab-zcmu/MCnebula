@@ -41,8 +41,8 @@ method_summarize_nebula_index <-
            ## in the nebula, if too many structure score is too low, filter the nebula.
            ## or NA
            filter_via_struc_score = "tanimotoSimilarity", 
-           struc_score_cutoff = 0.4,
-           min_reached_pct = 0.7,
+           struc_score_cutoff = 0.3,
+           min_reached_pct = 0.6,
            ...
            ){
     classes <- data.table::rbindlist(nebula_class)
