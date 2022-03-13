@@ -118,6 +118,8 @@ grid_child_nebula <-
     ## gather nodes and edges
     graph <- tidygraph::tbl_graph(nodes = nodes, edges = edges)
     ## create network layout
+    if(layout == "fr" & nrow(nodes) >= 500)
+      layout = "kk"
     layout_n <- ggraph::create_layout(graph, layout = layout, ...)
     if(is.null(save_layout_df) == F){
       assign("layout_n", layout_n, envir = save_layout_df)
