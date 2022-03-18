@@ -79,6 +79,7 @@ annotate_child_nebulae <-
     p <- grid_child_nebula(
                            .MCn.child_graph_list[[nebula_name]],
                            anno = anno,
+                           class = metadata,
                            print_into = F,
                            layout = layout,
                            ## save layout data in this environment

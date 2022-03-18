@@ -34,6 +34,7 @@ nebula_re_rank <-
            collate_factor = 0.85,
            revise_MCn_formula_set = T,
            revise_MCn_structure_set = T,
+           only_gather_structure = F,
            ...
            ){
     cat("[INFO] MCnebula run: nebula_re_rank\n")
@@ -60,6 +61,12 @@ nebula_re_rank <-
     structure_set <- data.table::rbindlist(structure_set, fill = T)
     cat("## STAT of structure_set:",
         paste0(nrow(structure_set), " (structure sum)/", length(unique(structure_set$".id")), "(.id sum)"), "\n")
+    ## ---------------------------------------------------------------------- 
+    if(only_gather_structure == T){
+      df <- structure_set %>%
+        dplyr::as_tibble()
+      return(df)
+    }
     ## ---------------------------------------------------------------------- 
     ## get sdfset, and further get apset via ChemmineR
     cat("## convert data: SMILES_set -> SDF_set -> AP_set\n")
@@ -140,7 +147,8 @@ df_get_structure <-
     }
     df <- dplyr::mutate(df, .id = x[[".id"]]) ## add key_id
     top_simi <- df[1, "tanimotoSimilarity"]
-    df <- dplyr::filter(df, tanimotoSimilarity >= top_simi * collate_factor)
+    if(is.na(collate_factor) == F)
+      df <- dplyr::filter(df, tanimotoSimilarity >= top_simi * collate_factor)
     return(df)
   }
 rename_file <-
