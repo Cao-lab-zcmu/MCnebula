@@ -29,12 +29,19 @@
 nebula_re_rank <-
   function(
            nebula_name,
-           top_n = 10,
-           match_pattern = c("precursorFormula"), ## or c("precursorFormula", "adduct")
-           collate_factor = 0.85,
-           revise_MCn_formula_set = T,
-           revise_MCn_structure_set = T,
+           top_n = 50,
+           match_pattern = NULL, # c("precursorFormula"), or c("precursorFormula", "adduct")
+           collate_factor = NA,
            only_gather_structure = F,
+           ## ------------------------------------- 
+           reference_ratio = 0.5,
+           csi_score_weight = 0.6,
+           class_similarity_weight = 0.3,
+           rt_weight = 0.1,
+           rt_window = 1.5,
+           ## ------------------------------------- 
+           revise_MCn_formula_set = F,
+           revise_MCn_structure_set = F,
            ...
            ){
     cat("[INFO] MCnebula run: nebula_re_rank\n")
@@ -68,22 +75,43 @@ nebula_re_rank <-
       return(df)
     }
     ## ---------------------------------------------------------------------- 
+    ## ---------------------------------------------------------------------- 
+    ## ---------------------------------------------------------------------- 
+    reference_compound <- dplyr::filter(structure_set, structure_rank == 1) %>% 
+      dplyr::select(.id, structure_rank, tanimotoSimilarity) %>% 
+      dplyr::arrange(tanimotoSimilarity) %>% 
+      dplyr::slice(1:(round(reference_ratio * nrow(.))))
+    ## ------------------------------------- 
     ## get sdfset, and further get apset via ChemmineR
     cat("## convert data: SMILES_set -> SDF_set -> AP_set\n")
     sdfset <- smiles_to_sdfset(structure_set)
     apset <- sdf2ap(sdfset)
-    ## ---------------------------------------------------------------------- 
+    ## ------------------------------------- 
     ## cluster method
     cluster_method <- "method_rerank_binning_cluster"
     method_fun <- match.fun(cluster_method)
-    meta_rank <- method_fun(apset, ...)
-    print(meta_rank)
-    ## ---------------------------------------------------------------------- 
+    meta_rank <- method_fun(apset, reference_compound, ...)
+    ## ------------------------------------- 
     structure_set <- merge(structure_set,
-                           meta_rank[, c(".id", "structure_rank", "size")],
-                           by = c(".id", "structure_rank"), all.x = T) %>%
-      dplyr::filter(is.na(size) == F) %>%
+                           meta_rank[, c(".id", "structure_rank", "norm_score")],
+                           by = c(".id", "structure_rank"), all.x = T)
+    ## ------------------------------------- 
+    ## get comprehensive score
+    structure_set <- by_group_as_list(structure_set, ".id") %>% 
+      lapply(function(df){
+               dplyr::mutate(df, norm_csi_score = (score / max(score))^-1)
+                           }) %>% 
+      data.table::rbindlist()
+    ## ------------------------------------- 
+    ## gather score
+    structure_set <- structure_set %>% 
+      dplyr::mutate(re_rank_score = csi_score_weight * norm_csi_score +
+                    class_similarity_weight * norm_score) %>% 
+      dplyr::arrange(.id, desc(re_rank_score)) %>% 
+      dplyr::distinct(.id, .keep_all = T) %>% 
       dplyr::as_tibble()
+    ## ---------------------------------------------------------------------- 
+    ## ---------------------------------------------------------------------- 
     ## ---------------------------------------------------------------------- 
     ## revise .GlobalVar .MCn.formula_set
     if(revise_MCn_formula_set == T){
@@ -146,9 +174,10 @@ df_get_structure <-
       return(df)
     }
     df <- dplyr::mutate(df, .id = x[[".id"]]) ## add key_id
-    top_simi <- df[1, "tanimotoSimilarity"]
-    if(is.na(collate_factor) == F)
+    if(is.na(collate_factor) == F){
+      top_simi <- df[1, "tanimotoSimilarity"]
       df <- dplyr::filter(df, tanimotoSimilarity >= top_simi * collate_factor)
+    }
     return(df)
   }
 rename_file <-
