@@ -35,6 +35,8 @@ nebula_re_rank <-
            only_gather_structure = F,
            ## ------------------------------------- 
            reference_ratio = 0.5,
+           ## ------------------------------------- 
+           cluster_method = NA,
            csi_score_weight = 0.6,
            class_similarity_weight = 0.3,
            rt_weight = 0.1,
@@ -45,107 +47,37 @@ nebula_re_rank <-
            ...
            ){
     cat("[INFO] MCnebula run: nebula_re_rank\n")
-    ## get formula
-    id_set <- dplyr::filter(.MCn.nebula_index, name == nebula_name)
-    formula_adduct <- dplyr::filter(.MCn.formula_set, .id %in% id_set$".id")
     ## ---------------------------------------------------------------------- 
-    ## match patern
-    if("precursorFormula" %in% match_pattern == F){
-      formula_adduct$precursorFormula = NULL
-    }
-    if("adduct" %in% match_pattern == F){
-      formula_adduct$adduct = NULL
-    }
-    ## ---------------------------------------------------------------------- 
-    ## catch file
-    formula_adduct <- by_group_as_list(formula_adduct, ".id")
-    ## then, use lapply match file
-    cat("## netbula_re_rank: get_structure\n")
-    structure_set <- pbapply::pblapply(formula_adduct, df_get_structure,
-                                       top_n = top_n,
-                                       collate_factor = collate_factor,
-                                       ...)
-    structure_set <- data.table::rbindlist(structure_set, fill = T)
-    cat("## STAT of structure_set:",
-        paste0(nrow(structure_set), " (structure sum)/", length(unique(structure_set$".id")), "(.id sum)"), "\n")
-    ## ---------------------------------------------------------------------- 
+    structure_set <- get_nebula_structure_candidates(nebula_name, top_n, match_pattern, collate_factor,
+                                                     ...)
     if(only_gather_structure == T){
-      df <- structure_set %>%
-        dplyr::as_tibble()
-      return(df)
+      return(dplyr::as_tibble(structure_set))
     }
     ## ---------------------------------------------------------------------- 
+    reference_compound <- set_reference_compound(structure_set, reference_ratio)
     ## ---------------------------------------------------------------------- 
-    ## ---------------------------------------------------------------------- 
-    reference_compound <- dplyr::filter(structure_set, structure_rank == 1) %>% 
-      dplyr::select(.id, structure_rank, tanimotoSimilarity) %>% 
-      dplyr::arrange(tanimotoSimilarity) %>% 
-      dplyr::slice(1:(round(reference_ratio * nrow(.))))
-    ## ------------------------------------- 
-    ## get sdfset, and further get apset via ChemmineR
-    cat("## convert data: SMILES_set -> SDF_set -> AP_set\n")
-    sdfset <- smiles_to_sdfset(structure_set)
-    apset <- sdf2ap(sdfset)
-    ## ------------------------------------- 
     ## cluster method
-    cluster_method <- "method_rerank_binning_cluster"
-    method_fun <- match.fun(cluster_method)
-    meta_rank <- method_fun(apset, reference_compound, ...)
-    ## ------------------------------------- 
-    structure_set <- merge(structure_set,
-                           meta_rank[, c(".id", "structure_rank", "norm_score")],
-                           by = c(".id", "structure_rank"), all.x = T)
-    ## ------------------------------------- 
-    ## get comprehensive score
-    structure_set <- by_group_as_list(structure_set, ".id") %>% 
-      lapply(function(df){
-               dplyr::mutate(df, norm_csi_score = (score / max(score))^-1)
-                           }) %>% 
-      data.table::rbindlist()
-    ## ------------------------------------- 
-    ## gather score
-    structure_set <- structure_set %>% 
-      dplyr::mutate(re_rank_score = csi_score_weight * norm_csi_score +
-                    class_similarity_weight * norm_score) %>% 
-      dplyr::arrange(.id, desc(re_rank_score)) %>% 
-      dplyr::distinct(.id, .keep_all = T) %>% 
-      dplyr::as_tibble()
-    ## ---------------------------------------------------------------------- 
-    ## ---------------------------------------------------------------------- 
+    if(is.na(cluster_method) == F){
+      method_fun <- match.fun(cluster_method)
+      structure_set <- method_fun(structure_set, reference_compound, csi_score_weight = csi_score_weight,
+                                  class_similarity_weight = class_similarity_weight,
+                                  ...)
+    }
     ## ---------------------------------------------------------------------- 
     ## revise .GlobalVar .MCn.formula_set
     if(revise_MCn_formula_set == T){
-      ## prepare replace data
-      rp <- dplyr::arrange(structure_set, .id) %>%
-        tidyr::separate(col = "file_name", sep = "_", into = c("precursorFormula", "adduct")) %>%
-        dplyr::mutate(adduct = gsub("\\+(?!$)", " \\+ ", adduct, perl = T),
-                      adduct = gsub("\\-(?!$)", " \\- ", adduct, perl = T)) %>%
-        dplyr::select(.id, precursorFormula, adduct, molecularFormula)
-      ## replace
-      fset <- dplyr::arrange(.MCn.formula_set, .id)
-      fset[fset$".id" %in% rp$".id", c(".id", "precursorFormula", "adduct", "molecularFormula")] <- rp
-      .MCn.formula_set <<- fset
+      revise_MCn_formula_set(structure_set)
     }
     ## ---------------------------------------------------------------------- 
     ## revise .GlobalVar .MCn.structure_set -------
     if(revise_MCn_structure_set == T){
-      sset <- dplyr::arrange(.MCn.structure_set, .id)
-      ## prepare replace data
-      rp <- dplyr::arrange(structure_set, .id) %>%
-        dplyr::select(colnames(sset))
-      ## replace
-      sset <- dplyr::distinct(rbind(rp, sset), .id, .keep_all = T)
-      .MCn.structure_set <<- sset
-      ## rename exist structure picture -------
-      tmp_stru <- paste0(.MCn.output, "/", .MCn.results, "/tmp/structure")
-      if(file.exists(tmp_stru) == T){
-        lapply(paste0(tmp_stru, "/", rp$".id", ".svg"), rename_file)
-      }
+      revise_MCn_structure_set(structure_set)
     }
     ## ---------------------------------------------------------------------- 
     cat("[INFO] MCnebula Job Done: nebula_re_rank\n")
-    return(structure_set)
+    return(dplyr::as_tibble(structure_set))
   }
+## ---------------------------------------------------------------------- 
 smiles_to_sdfset <-
   function(
            structure_set
@@ -188,4 +120,81 @@ rename_file <-
     if(file.exists(file) == T){
       file.rename(file, paste0(file, ".", suffix))
     }
+  }
+revise_MCn_formula_set <- 
+  function(
+           structure_set
+           ){
+    ## prepare replace data
+    rp <- dplyr::arrange(structure_set, .id) %>%
+      tidyr::separate(col = "file_name", sep = "_", into = c("precursorFormula", "adduct")) %>%
+      dplyr::mutate(adduct = gsub("\\+(?!$)", " \\+ ", adduct, perl = T),
+                    adduct = gsub("\\-(?!$)", " \\- ", adduct, perl = T)) %>%
+      dplyr::select(.id, precursorFormula, adduct, molecularFormula)
+    ## replace
+    fset <- dplyr::arrange(.MCn.formula_set, .id)
+    fset[fset$".id" %in% rp$".id", c(".id", "precursorFormula", "adduct", "molecularFormula")] <- rp
+    .MCn.formula_set <<- fset
+    return()
+  }
+revise_MCn_structure_set <- 
+  function(
+           structure_set
+           ){
+    sset <- dplyr::arrange(.MCn.structure_set, .id)
+    ## prepare replace data
+    rp <- dplyr::arrange(structure_set, .id) %>%
+      dplyr::select(colnames(sset))
+    ## replace
+    sset <- dplyr::distinct(rbind(rp, sset), .id, .keep_all = T)
+    .MCn.structure_set <<- sset
+    ## rename exist structure picture -------
+    tmp_stru <- paste0(.MCn.output, "/", .MCn.results, "/tmp/structure")
+    if(file.exists(tmp_stru) == T){
+      lapply(paste0(tmp_stru, "/", rp$".id", ".svg"), rename_file)
+    }
+  }
+get_nebula_structure_candidates <- 
+  function(
+           nebula_name,
+           top_n = 50,
+           match_pattern = NULL,
+           collate_factor = NA,
+           ... 
+           ){
+    ## get formula
+    id_set <- dplyr::filter(.MCn.nebula_index, name == nebula_name)
+    formula_adduct <- dplyr::filter(.MCn.formula_set, .id %in% id_set$".id")
+    ## ---------------------------------------------------------------------- 
+    ## match patern
+    if("precursorFormula" %in% match_pattern == F){
+      formula_adduct$precursorFormula = NULL
+    }
+    if("adduct" %in% match_pattern == F){
+      formula_adduct$adduct = NULL
+    }
+    ## ---------------------------------------------------------------------- 
+    ## catch file
+    formula_adduct <- by_group_as_list(formula_adduct, ".id")
+    ## then, use lapply match file
+    cat("## netbula_re_rank: get_structure\n")
+    structure_set <- pbapply::pblapply(formula_adduct, df_get_structure,
+                                       top_n = top_n,
+                                       collate_factor = collate_factor,
+                                       ...)
+    structure_set <- data.table::rbindlist(structure_set, fill = T)
+    cat("## STAT of structure_set:",
+        paste0(nrow(structure_set), " (structure sum)/", length(unique(structure_set$".id")), "(.id sum)"), "\n")
+    return(structure_set)
+  }
+set_reference_compound <- 
+  function(
+           structure_set,
+           reference_ratio = 0.5
+           ){
+    reference_compound <- dplyr::filter(structure_set, structure_rank == 1) %>% 
+      dplyr::select(.id, structure_rank, tanimotoSimilarity) %>% 
+      dplyr::arrange(tanimotoSimilarity) %>% 
+      dplyr::slice(1:(round(reference_ratio * nrow(.))))
+    return(reference_compound)
   }
