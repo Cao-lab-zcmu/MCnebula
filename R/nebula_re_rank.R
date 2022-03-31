@@ -34,11 +34,14 @@ nebula_re_rank <-
            collate_factor = NA,
            only_gather_structure = F,
            ## ------------------------------------- 
+           reference_compound = NA,
            reference_ratio = 0.5,
            ## ------------------------------------- 
            cluster_method = NA,
            csi_score_weight = 0.6,
            class_similarity_weight = 0.3,
+           ## ------------------------------------- 
+           rt_set = NA,
            rt_weight = 0.1,
            rt_window = 1.5,
            ## ------------------------------------- 
@@ -54,7 +57,11 @@ nebula_re_rank <-
       return(dplyr::as_tibble(structure_set))
     }
     ## ---------------------------------------------------------------------- 
-    reference_compound <- set_reference_compound(structure_set, reference_ratio)
+    if(is.data.frame(reference_compound) == F){
+      reference_compound <- set_reference_compound(structure_set, reference_ratio)
+    }else{
+      reference_compound <- reference_compound
+    }
     ## ---------------------------------------------------------------------- 
     ## cluster method
     if(is.na(cluster_method) == F){
@@ -63,6 +70,13 @@ nebula_re_rank <-
                                   class_similarity_weight = class_similarity_weight,
                                   ...)
     }
+    ## ---------------------------------------------------------------------- 
+    ## rt prediction
+    if(is.data.frame(rt_set)){
+      structure_set <- predict_candidates_rt(structure_set, reference_compound, rt_set,
+                                             rt_weight = rt_weight, rt_window = rt_window, ...)
+    }
+    return(dplyr::as_tibble(structure_set))
     ## ---------------------------------------------------------------------- 
     ## revise .GlobalVar .MCn.formula_set
     if(revise_MCn_formula_set == T){
