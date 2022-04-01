@@ -19,6 +19,7 @@ Imports:
     igraph,
     MSnbase,
     pbapply,
+    RCurl,
     reshape2,
     stringr,
     svglite,

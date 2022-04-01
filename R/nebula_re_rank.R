@@ -41,6 +41,8 @@ nebula_re_rank <-
            csi_score_weight = 0.6,
            class_similarity_weight = 0.3,
            ## ------------------------------------- 
+           filter_via_classification = T,
+           ## ------------------------------------- 
            rt_set = NA,
            rt_weight = 0.1,
            rt_window = 1.5,
@@ -71,12 +73,17 @@ nebula_re_rank <-
                                   ...)
     }
     ## ---------------------------------------------------------------------- 
+    ## retrive class of candidates via classyfire
+    if(filter_via_classification == T){
+      structure_set <- method_filter_candidates_upon_classyfire(structure_set, nebula_name, ...)
+    }
+    return(structure_set)
+    ## ---------------------------------------------------------------------- 
     ## rt prediction
     if(is.data.frame(rt_set)){
-      structure_set <- predict_candidates_rt(structure_set, reference_compound, rt_set,
-                                             rt_weight = rt_weight, rt_window = rt_window, ...)
+      structure_set <- method_predict_candidates_rt(structure_set, reference_compound, rt_set,
+                                                    rt_weight = rt_weight, rt_window = rt_window, ...)
     }
-    return(dplyr::as_tibble(structure_set))
     ## ---------------------------------------------------------------------- 
     ## revise .GlobalVar .MCn.formula_set
     if(revise_MCn_formula_set == T){

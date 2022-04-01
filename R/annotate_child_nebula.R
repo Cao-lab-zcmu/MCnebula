@@ -111,7 +111,7 @@ annotate_child_nebulae <-
       p <- p + ggraph::geom_node_text(aes(label = name), size = 1)
     }
     ## add annotation ---------------------------------------------------------
-    ## require ChemmineOB and ChemmineR
+    ## plot 2D structure, require ChemmineOB and ChemmineR
     with_structure <- 0
     if(requireNamespace("ChemmineOB", quietly = T)){
       ## structure

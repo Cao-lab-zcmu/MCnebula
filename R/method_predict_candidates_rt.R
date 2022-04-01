@@ -1,4 +1,4 @@
-predict_candidates_rt <- 
+method_predict_candidates_rt <- 
   function(
            structure_set,
            reference_compound,
