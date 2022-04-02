@@ -41,7 +41,7 @@ nebula_re_rank <-
            csi_score_weight = 0.6,
            class_similarity_weight = 0.3,
            ## ------------------------------------- 
-           filter_via_classification = T,
+           filter_via_classification = F,
            ## ------------------------------------- 
            rt_set = NA,
            rt_weight = 0.1,
@@ -68,6 +68,7 @@ nebula_re_rank <-
     ## cluster method
     if(is.na(cluster_method) == F){
       method_fun <- match.fun(cluster_method)
+      cat("## netbula_re_rank:", paste0(cluster_method), "\n")
       structure_set <- method_fun(structure_set, reference_compound, csi_score_weight = csi_score_weight,
                                   class_similarity_weight = class_similarity_weight,
                                   ...)
@@ -75,12 +76,13 @@ nebula_re_rank <-
     ## ---------------------------------------------------------------------- 
     ## retrive class of candidates via classyfire
     if(filter_via_classification == T){
+      cat("## netbula_re_rank: method_filter_candidates_upon_classyfire\n")
       structure_set <- method_filter_candidates_upon_classyfire(structure_set, nebula_name, ...)
     }
-    return(structure_set)
     ## ---------------------------------------------------------------------- 
     ## rt prediction
     if(is.data.frame(rt_set)){
+      cat("## netbula_re_rank: method_predict_candidates_rt\n")
       structure_set <- method_predict_candidates_rt(structure_set, reference_compound, rt_set,
                                                     rt_weight = rt_weight, rt_window = rt_window, ...)
     }

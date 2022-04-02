@@ -16,7 +16,8 @@ packing_as_rdata_list <-
            path,
            pattern,
            rdata,
-           extra = NULL
+           extra = NULL,
+           rm_files = T
            ){
     file_set <- list.files(path, pattern = pattern)
     if(length(file_set) == 0)
@@ -26,6 +27,14 @@ packing_as_rdata_list <-
     names(list) <- file_set
     ## merge
     list <- c(extra, list)
+    ## according to name, unique
+    df <- data.table::data.table(name = names(list), n = 1:length(list))
+    df <- dplyr::distinct(df, name, .keep_all = T)
+    list <- list[df$n]
+    ## rm origin file sets
+    if(rm_files == T){
+      lapply(paste0(path, "/", file_set), file.remove)
+    }
     ## save as rdata
     save(list, file = paste0(path, "/", rdata))
   }

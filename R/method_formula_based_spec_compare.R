@@ -52,7 +52,7 @@ method_formula_based_spec_compare <-
     ## check dirs ---- spectra
     if(dirs == "all"){
       dirs <- list.files(path = path, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
-      cat("## method_formula_based_spec_compare: check_dir\n")
+      cat("## Method part: check_dir\n")
       check <- pbapply::pbsapply(dirs, check_dir, file = "spectra") %>% unname
     }else{
       check <- pbapply::pbsapply(dirs, check_dir, file = "spectra") %>% unname

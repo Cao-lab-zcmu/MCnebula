@@ -48,7 +48,7 @@ visualize_parent_nebula <-
     ## get nodes_color data
     metadata = .MCn.class_tree_data
     assign("envir_meta", environment(), envir = parent.env(environment()))
-    cat("## method_summarize_nebula_index\n")
+    cat("## visualize_parent_nebula: method_summarize_nebula_index\n")
     class <- pbapply::pblapply(.MCn.ppcp_dataset, method_summarize_nebula_class, 
                                class_data_type = "classes_tree_data",
                                max_number = 1,

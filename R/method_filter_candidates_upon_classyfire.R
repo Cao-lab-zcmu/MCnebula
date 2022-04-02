@@ -4,7 +4,6 @@ method_filter_candidates_upon_classyfire <-
            nebula_name,
            ...
            ){
-    cat("## netbula_re_rank: method_filter_candidates_upon_classyfire\n")
     ## ---------------------------------------------------------------------- 
     tmp_dir <- paste0(.MCn.results, "/tmp")
     ## dir for pubchem data
@@ -18,12 +17,45 @@ method_filter_candidates_upon_classyfire <-
            })
     ## ---------------------------------------------------------------------- 
     inchikey2d <- unique(structure_set$inchikey2D)
+    ## ------------------------------------- 
+    cat("## Method part: base_pubchem_curl_inchikey\n")
     pubchem_curl_inchikey(inchikey2d, tmp_pub, ...)
+    ## ------------------------------------- 
+    cat("## Method part: batch_get_classification (classyfireR::get_classification)\n")
+    batch_get_classification(inchikey2d, tmp_pub, tmp_classyfire, ...)
     ## ---------------------------------------------------------------------- 
-    cat("## use classyfireR to get classification\n")
-    auto_get_classification(inchikey2d, tmp_pub, tmp_classyfire, ...)
-    ## ---------------------------------------------------------------------- 
+    structure_set <- calculate_class_score(structure_set, nebula_name, ...)
+    return(structure_set)
   }
+## ---------------------------------------------------------------------- 
+calculate_class_score <- 
+  function(
+           structure_set,
+           nebula_name,
+           ...
+           ){
+    class_hierarchy <- mutate_get_parent_class(nebula_name, class_cutoff = 1) %>% 
+      unlist(use.names = F) %>% 
+      c(nebula_name, .) %>% 
+      data.table::data.table(Classification = ., hierarchy = length(.):1)
+    ## ------------------------------------- 
+    class_set <- extract_rdata_list(paste0(tmp_classyfire, "/class.rdata"), inchikey2d) %>%
+      data.table::rbindlist(idcol = T) %>% 
+      dplyr::rename(inchikey2d = .id) %>% 
+      merge(class_hierarchy, ., by = "Classification") %>% 
+      dplyr::mutate(class_score = hierarchy * 2) %>% 
+      dplyr::group_by(inchikey2d)
+    ## calculate score
+    class_score <- dplyr::summarise_at(class_set, "class_score", sum)
+    structure_set <- merge(structure_set, class_score,
+                           by.x = "inchikey2D", by.y = "inchikey2d", all.x = T) %>% 
+      dplyr::mutate(class_score = ifelse(is.na(class_score), 0, class_score)) %>% 
+      dplyr::arrange(.id, desc(score), desc(class_score)) %>% 
+      dplyr::distinct(.id, .keep_all = T) %>% 
+      dplyr::relocate(.id) %>% 
+      dplyr::as_tibble()
+  }
+
 ## ---------------------------------------------------------------------- 
 ## ---------------------------------------------------------------------- 
 ## ---------------------------------------------------------------------- 
@@ -45,7 +77,6 @@ pubchem_curl_inchikey <-
     if(length(inchikey2d) == 0)
       return()
     ## ------------------------------------- 
-    cat("## curl pubchem to get possibly InChIKey\n")
     pbapply::pblapply(inchikey2d, base_pubchem_curl_inchikey,
                       dir = dir, cl = curl_cl, ...)
     ## ------------------------------------- 
@@ -98,7 +129,7 @@ base_pubchem_curl_inchikey <-
 ## ---------------------------------------------------------------------- 
 ## ---------------------------------------------------------------------- 
 ## classyfire curl classification
-auto_get_classification <- 
+batch_get_classification <- 
   function(
            inchikey2d,
            dir_pubchem,

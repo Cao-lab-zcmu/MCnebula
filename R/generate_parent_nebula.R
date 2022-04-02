@@ -44,18 +44,19 @@ generate_parent_nebula <-
     ## generate edges data
     if(is.null(edges_method) == T){
       ## no edges_method
-      cat("# generate_parent_nebula: no edges_uethod used\n")
+      cat("## generate_parent_nebula: no edges_uethod used\n")
       edges <- dplyr::as_tibble(cbind(".id_1" = nodes_other_attributes$".id",
                      ".id_2" = nodes_other_attributes$".id")) %>%
         dplyr::mutate(dotproduct = 1, mass_diff = 0)
     }else if(edges_method == "method_formula_based_spec_compare"){
       ## with edges_method
       if(is.null(edges_file) == F & file.exists(edges_file)){
-        cat("# generate_parent_nebula: file.exists(edges_file) == T. Escape from time-consuming computation\n")
+        cat("## generate_parent_nebula: file.exists(edges_file) == T. Escape from time-consuming computation\n")
         edges <- read_tsv(edges_file) %>%
           dplyr::mutate_at(c(".id_1", ".id_2"), as.character) %>%
           dplyr::mutate_at(c(colnames(edges)[3:4]), as.numeric)
       }else{
+        cat("## generate_parent_nebula: method_formula_based_spec_compare\n")
         edges = method_formula_based_spec_compare(edge_filter = edge_filter, cpu_cores = cpu_cores, ...)
       }
     }

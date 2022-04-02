@@ -35,7 +35,7 @@ method_rerank_binning_cluster <-
     apset <- sdf2ap(sdfset)
     ## ---------------------------------------------------------------------- 
     ## cluster via function of ChemmineR
-    cat("## method_rerank_binning_cluster: ChemmineR::cmp.cluster\n")
+    cat("## Method part: ChemmineR::cmp.cluster\n")
     meta_rank <- ChemmineR::cmp.cluster(db = apset, cutoff = cluster_cutoff)
     ## ---------------------------------------------------------------------- 
     ## preparation for calculating

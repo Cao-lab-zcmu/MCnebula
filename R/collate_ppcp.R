@@ -66,7 +66,7 @@ collate_ppcp <-
     ## ---------------------------------------------------------------------- 
     ## summarize nebula_class
     if(nebula_class == T){
-      cat("## method_summarize_nebula_class\n")
+      cat("## collate_ppcp: method_summarize_nebula_class\n")
       metadata <- data.table::rbindlist(.MCn.class_tree_list, idcol = T) %>%
         dplyr::rename(hierarchy = .id)
       ## ------------------------------------- 
@@ -83,7 +83,7 @@ collate_ppcp <-
     }
     ## ---------------------------------------------------------------------- 
     if(nebula_index == T){
-      cat("## method_summarize_nebula_index.\n")
+      cat("## collate_ppcp: method_summarize_nebula_index.\n")
       ## gather all nebula classes
       nebula_index <- method_summarize_nebula_index(ppcp_dataset,
                                                     ...)
