@@ -40,7 +40,7 @@ calculate_class_score <-
       unlist(use.names = F) %>% 
       c(nebula_name, .) %>% 
       data.table::data.table(Classification = ., hierarchy = length(.):1) %>% 
-      dplyr::filter(hierarchy == 4)
+      dplyr::filter(hierarchy >= 4)
     ## ------------------------------------- 
     inchikey2d <- unique(structure_set$inchikey2D)
     ## ------------------ 
