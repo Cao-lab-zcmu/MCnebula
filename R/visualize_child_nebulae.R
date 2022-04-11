@@ -73,7 +73,7 @@ visualize_child_nebulae <-
                          function(x){
                            graph_list[[x]]
                          })
-    ## prepare grid palette
+    ## prepare grid panel
     svglite::svglite(paste0(output, "/", "child_nebulae.svg"), width = width, height = height)
     grid::grid.newpage()
     grid::pushViewport(viewport(layout = grid.layout(rows, cols)))
@@ -92,7 +92,7 @@ visualize_child_nebulae <-
 grid_child_nebula <-
   function(
            graph,
-           anno,
+           anno = c(nebula_index = "classification"),
            class,
            layout = "fr",
            title_palette = .MCn.palette_label,
