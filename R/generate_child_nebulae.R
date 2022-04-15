@@ -48,6 +48,7 @@ generate_child_nebulae <-
     .MCn.child_graph_list <<- pbapply::pblapply(nebula_index, separate_nebula,
                       output = dir,
                       max_edges = max_edges,
+                      output_format = output_format,
                       ...)
     cat("[INFO] MCnebula Job Done: generate_child_nebulae\n")
   }

@@ -65,12 +65,13 @@ visualize_child_nebulae <-
       dplyr::mutate(seq = 1:n, 
                     col = ifelse(seq %% cols != 0, seq %% cols, cols),
                     row = (seq - col)/cols + 1)
+    ## re-set rows
+    rows <- max(graph_anno$row)
     ## as list
     nebula_index <- graph_anno$nebula_index
     graph_anno <- by_group_as_list(graph_anno, "nebula_index")
     ## re-order the graph list according to annotation
-    graph_list <- lapply(nebula_index,
-                         function(x){
+    graph_list <- lapply(nebula_index, function(x){
                            graph_list[[x]]
                          })
     ## prepare grid panel
