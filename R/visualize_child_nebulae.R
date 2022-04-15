@@ -36,6 +36,7 @@ visualize_child_nebulae <-
            layout = "fr",
            width = 23,
            height = 30,
+           nodes_mark = NA,
            ...
            ){
     cat("[INFO] MCnebula run: visualize_child_nebulae\n")
@@ -44,6 +45,15 @@ visualize_child_nebulae <-
       data.table::rbindlist(idcol = T) %>%
       dplyr::select(.id, name) %>%
       dplyr::rename(vis_class = name)
+    ## ------------------------------------- 
+    if(is.data.frame(nodes_mark)){
+      ## the secound col as mark col
+      colnames(nodes_mark) <- c(".id", "mark")
+      ## merge with metadata
+      metadata <- merge(metadata, nodes_mark, by = ".id", all.x = T) %>% 
+        dplyr::mutate(vis_class = ifelse(is.na(mark), "UnMark", mark))
+    }
+    ## ---------------------------------------------------------------------- 
     ## draw network via ggplot, and print into grid palette
     ## number of child_nebulae
     n = length(graph_list)
@@ -55,6 +65,7 @@ visualize_child_nebulae <-
     }else{
       rows = cols
     }
+    ## ------------------------------------- 
     ## grid position of all child_nebulae
     graph_anno <- names(graph_list) %>% # names
       dplyr::as_tibble() %>%
@@ -65,6 +76,7 @@ visualize_child_nebulae <-
       dplyr::mutate(seq = 1:n, 
                     col = ifelse(seq %% cols != 0, seq %% cols, cols),
                     row = (seq - col)/cols + 1)
+    ## ------------------------------------- 
     ## re-set rows
     rows <- max(graph_anno$row)
     ## as list
@@ -74,6 +86,7 @@ visualize_child_nebulae <-
     graph_list <- lapply(nebula_index, function(x){
                            graph_list[[x]]
                          })
+    ## ------------------------------------- 
     ## prepare grid panel
     svglite::svglite(paste0(output, "/", "child_nebulae.svg"), width = width, height = height)
     grid::grid.newpage()
@@ -97,6 +110,7 @@ grid_child_nebula <-
            class,
            layout = "fr",
            title_palette = .MCn.palette_label,
+           palette = .MCn.palette,
            print_into = T,
            save_layout_df = NULL,
            remove_nodes = NULL,
@@ -125,8 +139,6 @@ grid_child_nebula <-
     if(is.null(save_layout_df) == F){
       assign("layout_n", layout_n, envir = save_layout_df)
     }
-    ## color palette
-    palette <- .MCn.palette
     ## plot
     p <- base_vis_c_nebula(layout_n, palette,
                            title = anno[["nebula_index"]],
@@ -148,20 +160,18 @@ base_vis_c_nebula <-
            nodes_size_range = c(3, 7),
            edges_width_range = c(0.1, 0.7),
            title_size = 20,
-           remove_nodes = NULL
+           remove_nodes = NULL,
+           ...
            ){
     if(is.null(remove_nodes) == F){
       nodes_size_range = 0
     }
     p <- ggraph::ggraph(nebula) + 
       ggraph::geom_edge_fan(aes(edge_width = similarity), color = "black", show.legend = F) + 
-      ggraph::geom_node_point(
-                      aes(
-                          size = ifelse(is.na(tanimotoSimilarity) == F, tanimotoSimilarity, 0.2),
-                          fill = vis_class
-                          ),
-                      shape = 21
-                      ) + 
+      ggraph::geom_node_point(aes(size = ifelse(is.na(tanimotoSimilarity) == F,
+                                                tanimotoSimilarity, 0.2),
+                                  fill = vis_class),
+                              shape = 21) + 
       ggplot2::scale_fill_manual(values = palette) +
       ggraph::scale_edge_width(range = edges_width_range) + 
       ggplot2::scale_size(range = nodes_size_range) +

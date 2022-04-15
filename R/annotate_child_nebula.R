@@ -76,8 +76,7 @@ annotate_child_nebulae <-
       remove_nodes = NULL
     }
     ## plot origin network (child network, with legend)
-    p <- grid_child_nebula(
-                           .MCn.child_graph_list[[nebula_name]],
+    p <- grid_child_nebula(.MCn.child_graph_list[[nebula_name]],
                            anno = anno,
                            class = metadata,
                            print_into = F,
