@@ -71,7 +71,7 @@ method_summarize_nebula_index <-
       merge(index_df, by = "relativeIndex", all.y = T, sort = F) %>%
       data.table::data.table()
     ## ---------------------------------------------------------------------- 
-    if(is.na(identical_factor) == F){
+    if(!is.na(identical_factor)){
       ## filter identical or similar classes
       ## enumerate combination
       class_for_merge <- index_df %>% 
@@ -89,7 +89,7 @@ method_summarize_nebula_index <-
       index_df <- dplyr::filter(index_df, !relativeIndex %in% discard)
     }
     ## ---------------------------------------------------------------------- 
-    if(is.na(filter_via_struc_score) == F){
+    if(!is.na(filter_via_struc_score)){
       df <- merge(index_df, .MCn.structure_set[, c(".id", filter_via_struc_score)],
                   by = ".id", all.x = T)
       list <- by_group_as_list(df, "relativeIndex")
