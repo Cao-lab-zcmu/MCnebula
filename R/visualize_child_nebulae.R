@@ -51,7 +51,7 @@ visualize_child_nebulae <-
       colnames(nodes_mark) <- c(".id", "mark")
       ## merge with metadata
       metadata <- merge(metadata, nodes_mark, by = ".id", all.x = T) %>% 
-        dplyr::mutate(vis_class = ifelse(is.na(mark), "UnMark", mark))
+        dplyr::mutate(vis_class = ifelse(is.na(mark), "Others", mark))
     }
     ## ---------------------------------------------------------------------- 
     ## draw network via ggplot, and print into grid palette
