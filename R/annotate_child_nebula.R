@@ -71,9 +71,9 @@ annotate_child_nebulae <-
     envir_layout <- new.env() 
     ## set to remove nodes or not (set to 0, remove)
     if(plot_ppcp == T | plot_structure == T){
-      remove_nodes = 0
+      remove_nodes = T
     }else{
-      remove_nodes = NULL
+      remove_nodes = F
     }
     ## plot origin network (child network, with legend)
     p <- grid_child_nebula(.MCn.child_graph_list[[nebula_name]],

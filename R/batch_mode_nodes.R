@@ -1,26 +1,3 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param metadata PARAM_DESCRIPTION
-#' @param tmp_ppcp PARAM_DESCRIPTION
-#' @param with_structure PARAM_DESCRIPTION, Default: 0
-#' @param plot_ppcp PARAM_DESCRIPTION, Default: plot_ppcp
-#' @param plot_ratio PARAM_DESCRIPTION, Default: F
-#' @param ratio_df PARAM_DESCRIPTION, Default: NULL
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @seealso 
-#'  \code{\link[dplyr]{select}}, \code{\link[dplyr]{distinct}}, \code{\link[dplyr]{arrange}}, \code{\link[dplyr]{mutate}}
-#'  \code{\link[pbapply]{pbapply}}
-#' @rdname batch_mode_nodes
-#' @importFrom dplyr select distinct arrange mutate
-#' @importFrom pbapply pbmapply
 batch_mode_nodes <-
   function(
            metadata,
@@ -50,7 +27,7 @@ batch_mode_nodes <-
     meta_ppcp <- meta_ppcp[order(meta_ppcp$".id"), ]
     ## ---------------------------------------------------------------------- 
     ## ratio_df, extra peak area data
-    if(plot_ratio == T){
+    if(plot_ratio){
       ratio_df <- dplyr::mutate(ratio_df, .id = as.character(.id))
       ratio_df <- merge(dplyr::select(meta_ppcp, .id), ratio_df, all.x = T, by = ".id", sort = F)
       ## get list data

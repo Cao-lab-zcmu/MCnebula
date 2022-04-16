@@ -113,7 +113,10 @@ grid_child_nebula <-
            palette = .MCn.palette,
            print_into = T,
            save_layout_df = NULL,
-           remove_nodes = NULL,
+           remove_nodes = F,
+           legend_fill = F,
+           legend_size = F,
+           remove_legend_lab = F,
            ...
            ){
     ## reformat graph, add with class
@@ -145,11 +148,16 @@ grid_child_nebula <-
                            title_fill = title_palette[as.numeric(anno[["hierarchy"]])],
                            remove_nodes = remove_nodes,
                            ...)
-    if(print_into == F){
+    if(!print_into){
       return(p)
     }
-    print(p + ggplot2::guides(size="none", fill="none"),
-          vp = grid::viewport(layout.pos.row = anno[["row"]], layout.pos.col = anno[["col"]]))
+    p <- p + ggplot2::guides(size = ifelse(legend_size, "legend", "none"),
+                             fill = ifelse(legend_fill, "legend", "none"))
+    if(remove_legend_lab){
+      p <- p + ggplot2::labs(size = "", fill = "")
+    }
+    print(p, vp = grid::viewport(layout.pos.row = anno[["row"]],
+                                 layout.pos.col = anno[["col"]]))
   }
 base_vis_c_nebula <-
   function(
@@ -160,12 +168,16 @@ base_vis_c_nebula <-
            nodes_size_range = c(3, 7),
            edges_width_range = c(0.1, 0.7),
            title_size = 20,
-           remove_nodes = NULL,
+           remove_nodes = F,
            ...
            ){
-    if(is.null(remove_nodes) == F){
+    if(is.vector(attr(palette, "name")))
+      palette <- palette[which(names(palette) %in% nebula$vis_class)]
+    ## ------------------------------------- 
+    if(remove_nodes){
       nodes_size_range = 0
     }
+    ## ------------------------------------- 
     p <- ggraph::ggraph(nebula) + 
       ggraph::geom_edge_fan(aes(edge_width = similarity), color = "black", show.legend = F) + 
       ggraph::geom_node_point(aes(size = ifelse(is.na(tanimotoSimilarity) == F,
@@ -185,6 +197,7 @@ base_vis_c_nebula <-
             axis.text = element_blank(),
             axis.title = element_blank(),
             panel.background = element_rect(fill = "white"),
+            legend.position = "bottom",
             panel.grid = element_blank(),
             plot.title = ggtext::element_textbox(
                                          size = title_size,
