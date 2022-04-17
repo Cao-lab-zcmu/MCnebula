@@ -45,9 +45,10 @@ annotate_child_nebulae <-
            plot_nodes_id = T,
            plot_structure = T,
            plot_ppcp = T,
-           ratio_df = NULL,
+           ratio_df = NA,
            merge_image = T,
            return_plot = F,
+           nodes_mark = NA,
            ...
            ){
     cat("[INFO] MCnebula run: annotate_child_nebulae\n")
@@ -61,16 +62,27 @@ annotate_child_nebulae <-
       dplyr::filter(.id %in% nodes) %>% # filter via nodes
       dplyr::select(.id, name) %>%
       dplyr::rename(vis_class = name)
-    ## push environment name into parent.env, let some data could be catch in sub-environment via 'get' function
+    ## ---------------------------------------------------------------------- 
+    ## mark nodes in color
+    if(is.data.frame(nodes_mark)){
+      ## the secound col as mark col
+      colnames(nodes_mark) <- c(".id", "mark")
+      ## merge with metadata
+      metadata <- merge(metadata, nodes_mark, by = ".id", all.x = T) %>% 
+        dplyr::mutate(vis_class = ifelse(is.na(mark), "Others", mark))
+    }
+    ## ---------------------------------------------------------------------- 
+    ## push environment name into parent.env,
+    ## let some data could be catch in sub-environment via 'get' function
     assign("envir_meta", environment(), envir = parent.env(environment()))
+    ## ------------------------------------------------------------------------
     ## gather data for annotation (nebula_name, hierarchy)
     hierarchy <- head(dplyr::filter(.MCn.nebula_index, name == nebula_name), n = 1)
     anno = c(nebula_index = nebula_name, hierarchy = hierarchy$hierarchy)
-    ## ------------------------------------------------------------------------
     ## set a environment to store layout data
     envir_layout <- new.env() 
     ## set to remove nodes or not (set to 0, remove)
-    if(plot_ppcp == T | plot_structure == T){
+    if(plot_ppcp | plot_structure){
       remove_nodes = T
     }else{
       remove_nodes = F
@@ -88,25 +100,21 @@ annotate_child_nebulae <-
                            ...)
     ## ---------------------------------------------------------------------- 
     ## whether plot pie diagram
-    if(is.null(ratio_df) == F){
-      if(is.data.frame(ratio_df) == T){
-        plot_ratio = T
-      }else{
-        cat("is.data.frame(ratio_df) == F\n")
-        plot_ratio = F
-      }
+    if(is.data.frame(ratio_df)){
+      plot_ratio = T
     }else{
+      cat("is.data.frame(ratio_df) == F\n")
       plot_ratio = F
     }
     ## ------------------------------------------------------------------------
     ## tmp dir
     tmp_dir <- paste0(output, "/", "tmp")
-    if(file.exists(tmp_dir) == F){
+    if(!file.exists(tmp_dir)){
       dir.create(tmp_dir)
     }
     ## add annotation ---------------------------------------------------------
     ## nodes id
-    if(plot_nodes_id == T & (plot_ppcp == F)){
+    if(plot_nodes_id  & !plot_ppcp){
       p <- p + ggraph::geom_node_text(aes(label = name), size = 1)
     }
     ## add annotation ---------------------------------------------------------
@@ -118,7 +126,7 @@ annotate_child_nebulae <-
       if(file.exists(tmp_stru) == F){
         dir.create(tmp_stru)
       }
-      if(plot_structure == T){
+      if(plot_structure){
         with_structure <- 1
         batch_mode_structure(metadata = metadata, tmp_stru = tmp_stru)
       }
@@ -126,10 +134,10 @@ annotate_child_nebulae <-
     ## add annotation ---------------------------------------------------------
     ## re draw nodes with or without ppcp bar
     tmp_ppcp <- paste0(tmp_dir, "/", "ppcp")
-    if(file.exists(tmp_ppcp) == F){
+    if(!file.exists(tmp_ppcp)){
       dir.create(tmp_ppcp)
     }
-    if(plot_ppcp == T | plot_structure == T | plot_ratio == T){
+    if(plot_ppcp | plot_structure | plot_ratio ){
       batch_mode_nodes(
                        metadata = metadata,
                        tmp_ppcp = tmp_ppcp,
@@ -141,7 +149,7 @@ annotate_child_nebulae <-
     }
     ## ------------------------------------------------------------------------
     ## merge image
-    if(merge_image == T){
+    if(merge_image){
       if(requireNamespace("ggimage", quietly = T) &
          requireNamespace("gridExtra", quietly = T)){
         ## remove legend of size
@@ -151,12 +159,12 @@ annotate_child_nebulae <-
     }
     ## ------------------------------------------------------------------------
     ## write_output ## estimate width
-    if(write_output == T){
+    if(write_output){
       if(height == "auto" | width == "auto"){
         ## estimate width upon legend number of 'fill'
         n = length(unique(metadata$vis_class))
         height = 8
-        width = ifelse(n <= 17, 10, ## 'class' less than 17
+        width = ifelse(n <= 17, 9, ## 'class' less than 17
                        ifelse(n <= 34, 12.5,
                               ifelse(n <= 51, 15, 18)))
       }
@@ -165,7 +173,7 @@ annotate_child_nebulae <-
              width = width, height = height)
     }
     cat("[INFO] MCnebula Job Done: annotate_child_nebulae\n")
-    if(return_plot == T){
+    if(return_plot){
       return(p)
     }
   }
@@ -213,8 +221,7 @@ merge_image <-
     ## ---------------------------------------------------------------------- 
     ## as subview 
     cat("## Advance visualization: gather_subview\n")
-    pbapply::pbmapply(
-                      gather_subview, ## function
+    pbapply::pbmapply(gather_subview, ## function
                       subview_list,
                       df$x,
                       df$y,

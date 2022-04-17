@@ -5,42 +5,52 @@ batch_mode_nodes <-
            with_structure = 0,
            plot_ppcp = plot_ppcp,
            plot_ratio = F,
-           ratio_df = NULL,
+           ratio_df = NA,
+           palette = .MCn.palette,
+           palette_stat = .MCn.palette_stat,
            ...
            ){
     ## remove exist files
     lapply(list.files(tmp_ppcp, full.names = T), file.remove)
     ## ---------------------------------------------------------------------- 
-    ## nodes color, which parallel to the nodes color in plot of visualize_child_nebula function
+    ## nodes color setting, which parallel to the nodes color in plot of visualize_child_nebula function
     meta_color <- dplyr::select(metadata, vis_class) %>%
       dplyr::distinct() %>%
       dplyr::arrange(vis_class)
-    meta_color$nodes_color <- .MCn.palette[1:nrow(meta_color)]
+    if(is.vector(attr(palette, "name"))){
+      ## filter palette
+      palette <- palette[which(names(palette) %in% meta_color$vis_class)]
+      ## sort according to the order of 'vis_class'
+      palette <- palette[order(names(palette), levels = meta_color$vis_class)]
+      ## set color
+      meta_color$nodes_color <- palette
+    }else{
+      meta_color$nodes_color <- palette[1:nrow(meta_color)]
+    }
     ## gather color data
-    meta_ppcp <- merge(metadata, meta_color, by = "vis_class", all.x = T)
+    meta_nodes <- merge(metadata, meta_color, by = "vis_class", all.x = T)
     ## ---------------------------------------------------------------------- 
     ## pick ppcp_dataset
-    ppcp_dataset = .MCn.ppcp_dataset[which(names(.MCn.ppcp_dataset) %in% meta_ppcp$".id")]
+    ppcp_dataset = .MCn.ppcp_dataset[which(names(.MCn.ppcp_dataset) %in% meta_nodes$".id")]
     ## sort data
-    meta_ppcp$".id" <- factor(meta_ppcp$".id",
+    meta_nodes$".id" <- factor(meta_nodes$".id",
                               levels = names(ppcp_dataset))
-    meta_ppcp <- meta_ppcp[order(meta_ppcp$".id"), ]
+    meta_nodes <- meta_nodes[order(meta_nodes$".id"), ]
     ## ---------------------------------------------------------------------- 
     ## ratio_df, extra peak area data
     if(plot_ratio){
       ratio_df <- dplyr::mutate(ratio_df, .id = as.character(.id))
-      ratio_df <- merge(dplyr::select(meta_ppcp, .id), ratio_df, all.x = T, by = ".id", sort = F)
+      ratio_df <- merge(dplyr::select(meta_nodes, .id), ratio_df, all.x = T, by = ".id", sort = F)
       ## get list data
       ratio_df_list <- by_group_as_list(ratio_df, ".id")
     }else{
-      ratio_df_list <- rep(0, nrow(meta_ppcp))
+      ratio_df_list <- rep(0, nrow(meta_nodes))
     }
     ## ---------------------------------------------------------------------- 
     cat("## annotate_child_nebulae: batch_mode_nodes\n")
-    pbapply::pbmapply(
-                      base_vis_nodes, # function
+    pbapply::pbmapply(base_vis_nodes, # function
                       ppcp_dataset, # main 1
-                      meta_ppcp$nodes_color, # main 2
+                      meta_nodes$nodes_color, # main 2
                       names(ppcp_dataset), # main 3, key_id
                       ratio_df_list, # main 4, draw pie diagram
                       MoreArgs = list(
@@ -48,6 +58,7 @@ batch_mode_nodes <-
                                       with_structure = with_structure,
                                       plot_ppcp = plot_ppcp,
                                       plot_ratio = plot_ratio,
+                                      palette_stat = palette_stat,
                                       ...))
   }
 ## function mannually draw nodes
@@ -55,8 +66,8 @@ base_vis_nodes <-
   function(
            ppcp, ## main 1
            nodes_color, ## main 2
-           key_id = NULL, ## main 3
-           ratio_df = NULL, ## main 4, draw pie diagram
+           key_id = NA, ## main 3
+           ratio_df = NA, ## main 4, draw pie diagram
            plot_ratio = F,
            plot_nodes_id = T,
            plot_ppcp = T,
@@ -64,7 +75,7 @@ base_vis_nodes <-
            with_structure = 0,
            path = ".",
            class_index = unique(.MCn.nebula_index$relativeIndex),
-           palette = colorRampPalette(c(.MCn.palette))(length(class_index)),
+           palette_ppcp = colorRampPalette(.MCn.palette_ppcp)(length(class_index)),
            palette_stat = .MCn.palette_stat,
            size_adjust = 0.7
            ){
@@ -111,7 +122,7 @@ base_vis_nodes <-
         )
     ## ---------------------------------------------------------------------- 
     ## draw pie diagram
-    if(plot_ratio == T){
+    if(plot_ratio){
       ratio_df <- reshape2::melt(ratio_df, id.vars = ".id", variable.name = "group", value.name = "value")
       ## value stack
       ratio_df <- dplyr::mutate(ratio_df,
@@ -126,16 +137,16 @@ base_vis_nodes <-
       p <- p + ggplot2::geom_tile(data = ratio_df, size = 0.2, color = "white",
                                   aes(y = -2.5, x = midd, width = width, height = 2.5, fill = group)) +
         ## add 'fill' palette
-        ggplot2::scale_fill_manual(values = c(palette, palette_stat[1:nrow(ratio_df)]))
+        ggplot2::scale_fill_manual(values = c(palette_ppcp, palette_stat[1:nrow(ratio_df)]))
     }else{
       ## add 'fill' palette
-      p <- p + ggplot2::scale_fill_manual(values = palette)
+      p <- p + ggplot2::scale_fill_manual(values = palette_ppcp)
     }
     ## ---------------------------------------------------------------------- 
     ## generate Graphics Device
     savepath = paste0(path, "/", key_id, ".svg")
     svglite::svglite(savepath, bg = "transparent")
-    ## print nodes
+    ## print nodes 
     print(p)
     ## ---------------------------------------------------------------------- 
     ## print structure or not

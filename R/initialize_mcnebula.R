@@ -32,6 +32,7 @@ initialize_mcnebula <-
                               ggsci::pal_d3("category20")(20)
                               )),
            palette_stat = palette,
+           palette_ppcp = palette,
            palette_label = colorRampPalette(c("#C6DBEFFF", "#3182BDFF", "red"))(10),
            rm_var = F
            ){
@@ -52,6 +53,7 @@ initialize_mcnebula <-
     .MCn.results <<- output_file
     .MCn.palette <<- palette
     .MCn.palette_stat <<- palette_stat
+    .MCn.palette_ppcp <<- palette_ppcp
     .MCn.palette_label <<- palette_label
     dir.create(paste0(.MCn.output, "/", .MCn.results))
     cat("MCnebula project has initialized at ->", .MCn.output, "\n")

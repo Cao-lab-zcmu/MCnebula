@@ -138,7 +138,7 @@ grid_child_nebula <-
     ## create network layout
     if(layout == "fr" & nrow(nodes) >= 500)
       layout = "kk"
-    layout_n <- ggraph::create_layout(graph, layout = layout, ...)
+    layout_n <- ggraph::create_layout(graph, layout = layout)
     if(is.null(save_layout_df) == F){
       assign("layout_n", layout_n, envir = save_layout_df)
     }
@@ -169,6 +169,7 @@ base_vis_c_nebula <-
            edges_width_range = c(0.1, 0.7),
            title_size = 20,
            remove_nodes = F,
+           legend_position = "right",
            ...
            ){
     if(is.vector(attr(palette, "name")))
@@ -197,7 +198,7 @@ base_vis_c_nebula <-
             axis.text = element_blank(),
             axis.title = element_blank(),
             panel.background = element_rect(fill = "white"),
-            legend.position = "bottom",
+            legend.position = legend_position,
             panel.grid = element_blank(),
             plot.title = ggtext::element_textbox(
                                          size = title_size,
