@@ -55,11 +55,12 @@ get_structure <-
       ## order upon CSI:fingerID score
       if(structure_method == "top_score"){
         df <- df[order(-df$score),]
-        df$structure_rank = as.numeric(1:nrow(df))
+        df$structure_rank = 1:nrow(df)
       ## order upon tanimoto similarity
       }else if(structure_method == "top_similarity"){
-        df <- df[order(-df$similarity),]
-        df$structure_rank = as.numeric(1:nrow(df))
+        df$tanimotoSimilarity <- as.numeric(df$tanimotoSimilarity)
+        df <- df[order(-df$tanimotoSimilarity),]
+        df$structure_rank = 1:nrow(df)
       }
       ## ---------------------------------------------------
       if(as_tibble == T){

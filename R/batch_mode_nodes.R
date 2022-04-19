@@ -92,23 +92,23 @@ base_vis_nodes <-
     ## plot nodes 
     p <- ggplot(ppcp, aes(x = num, y = V1)) +
       ## nodes color
-      ggplot2::geom_ribbon(fill = nodes_color,
+      geom_ribbon(fill = nodes_color,
                            aes(ymin = -5, ymax = 0,
                                x = ifelse(num == 1, 0,
                                           ifelse(num == nrow(ppcp), num + 1, num)))) +
       ## border color
-      ggplot2::geom_ribbon(fill = "black",
+      geom_ribbon(fill = "black",
                            aes(ymin = 0, ymax = 1.1,
                                x = ifelse(num == 1, 0,
                                           ifelse(num == nrow(ppcp), num + 1, num)))) +
         ## ppcp bar plot
-        ggplot2::geom_col(alpha = 1, aes(fill = relativeIndex), color = "white", size = 0.25) +
+        geom_col(alpha = 1, aes(fill = relativeIndex), color = "white", size = 0.25) +
         ## nodes border ratio
-        ggplot2::ylim(-5, 1.3) +
+        ylim(-5, 1.3) +
         ## Polar coordinate transformation
-        ggplot2::coord_polar() +
-        ggplot2::theme_minimal() +
-        ggplot2::theme(
+        coord_polar() +
+        theme_minimal() +
+        theme(
               text = element_text(family="Times"),
               axis.ticks = element_blank(),
               axis.text = element_blank(),
@@ -124,6 +124,8 @@ base_vis_nodes <-
     ## draw pie diagram
     if(plot_ratio){
       ratio_df <- reshape2::melt(ratio_df, id.vars = ".id", variable.name = "group", value.name = "value")
+      ## mutate NA as 0
+      ratio_df <- dplyr::mutate(ratio_df, value = ifelse(is.na(value), 0, value))
       ## value stack
       ratio_df <- dplyr::mutate(ratio_df,
                                 xend = stack_sum(ratio_df$value),
@@ -134,13 +136,13 @@ base_vis_nodes <-
                          midd = (x + value/2) * n_factor,
                          width = value * n_factor)
       ## add pie plot into ggplot2 project
-      p <- p + ggplot2::geom_tile(data = ratio_df, size = 0.2, color = "white",
+      p <- p + geom_tile(data = ratio_df, size = 0.2, color = "white",
                                   aes(y = -2.5, x = midd, width = width, height = 2.5, fill = group)) +
         ## add 'fill' palette
-        ggplot2::scale_fill_manual(values = c(palette_ppcp, palette_stat[1:nrow(ratio_df)]))
+        scale_fill_manual(values = c(palette_ppcp, palette_stat[1:nrow(ratio_df)]))
     }else{
       ## add 'fill' palette
-      p <- p + ggplot2::scale_fill_manual(values = palette_ppcp)
+      p <- p + scale_fill_manual(values = palette_ppcp)
     }
     ## ---------------------------------------------------------------------- 
     ## generate Graphics Device

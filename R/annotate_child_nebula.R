@@ -103,7 +103,6 @@ annotate_child_nebulae <-
     if(is.data.frame(ratio_df)){
       plot_ratio = T
     }else{
-      cat("is.data.frame(ratio_df) == F\n")
       plot_ratio = F
     }
     ## ------------------------------------------------------------------------
@@ -115,7 +114,7 @@ annotate_child_nebulae <-
     ## add annotation ---------------------------------------------------------
     ## nodes id
     if(plot_nodes_id  & !plot_ppcp){
-      p <- p + ggraph::geom_node_text(aes(label = name), size = 1)
+      p <- p + geom_node_text(aes(label = name), size = 1)
     }
     ## add annotation ---------------------------------------------------------
     ## plot 2D structure, require ChemmineOB and ChemmineR
@@ -153,7 +152,7 @@ annotate_child_nebulae <-
       if(requireNamespace("ggimage", quietly = T) &
          requireNamespace("gridExtra", quietly = T)){
         ## remove legend of size
-        p <- p + ggplot2::guides(size = "none")
+        p <- p + guides(size = "none")
         merge_image(p, envir_layout$layout_n, tmp_ppcp)
       }
     }
@@ -169,7 +168,7 @@ annotate_child_nebulae <-
                               ifelse(n <= 51, 15, 18)))
       }
       ## output
-      ggplot2::ggsave(p, file = paste0(output, "/", nebula_name, "_graph.svg"),
+      ggsave(p, file = paste0(output, "/", nebula_name, "_graph.svg"),
              width = width, height = height)
     }
     cat("[INFO] MCnebula Job Done: annotate_child_nebulae\n")

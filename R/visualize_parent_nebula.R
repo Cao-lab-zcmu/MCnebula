@@ -70,14 +70,14 @@ visualize_parent_nebula <-
       dplyr::as_tibble()
     graph <- tidygraph::tbl_graph(nodes = nodes, edges = edges)
     ## create network layout
-    layout_n <- ggraph::create_layout(graph, layout = layout, ...)
+    layout_n <- create_layout(graph, layout = layout, ...)
     ## palette
     palette <- .MCn.palette
     ## draw network via ggraph
     p <- base_vis_p_nebula(layout_n, palette)
     ## write_output
     if(write_output == T){
-      ggplot2::ggsave(p, file = paste0(output, "/", "parent_nebula", "/", "parent_nebula.svg"),
+      ggsave(p, file = paste0(output, "/", "parent_nebula", "/", "parent_nebula.svg"),
              width = width, height = height)
     }
     cat("[INFO] MCnebula Job Done: visualize_parent_nebula\n")
@@ -91,22 +91,22 @@ base_vis_p_nebula <-
            palette = .MCn.palette,
            ...
            ){
-    p <- ggraph::ggraph(layout_n) + 
-      ggraph::geom_edge_fan(aes(edge_width = similarity), color = "lightblue", show.legend = F) + 
-      ggraph::geom_node_point(
+    p <- ggraph(layout_n) + 
+      geom_edge_fan(aes(edge_width = similarity), color = "lightblue", show.legend = F) + 
+      geom_node_point(
                       aes(
                           size = ifelse(is.na(tanimotoSimilarity) == F, tanimotoSimilarity, 0.2),
                           fill = stringr::str_wrap(vis_class, width = 25)
                           ),
                       shape = 21
                       ) + 
-      ggplot2::scale_fill_manual(values = palette) +
-      ggraph::scale_edge_width(range = c(0.1, 0.7)) + 
-      ggplot2::guides(fill = guide_legend(override.aes = list(size = 5))) +
-      ggplot2::labs(fill="Class", size="Tanimoto similarity") +
+      scale_fill_manual(values = palette) +
+      scale_edge_width(range = c(0.1, 0.7)) + 
+      guides(fill = guide_legend(override.aes = list(size = 5))) +
+      labs(fill="Class", size="Tanimoto similarity") +
       ## ------------------------------------- 
-      ggplot2::theme_grey() +
-      ggplot2::theme(
+      theme_grey() +
+      theme(
             text = element_text(family = "Times"),
             axis.ticks = element_blank(),
             axis.text = element_blank(),

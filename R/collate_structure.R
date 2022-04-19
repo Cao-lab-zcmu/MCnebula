@@ -54,6 +54,8 @@ collate_structure <-
                                          formula_set$adduct,
                                          SIMPLIFY = F)
   structure_dataset <- data.table::rbindlist(structure_dataset, fill = T) %>%
+    ## debug
+    dplyr::mutate(tanimotoSimilarity = as.numeric(tanimotoSimilarity)) %>% 
     dplyr::as_tibble()
   ## ------------------------------------- 
   ## set as global var
