@@ -51,7 +51,8 @@ visualize_child_nebulae <-
       colnames(nodes_mark) <- c(".id", "mark")
       ## merge with metadata
       metadata <- merge(metadata, nodes_mark, by = ".id", all.x = T) %>% 
-        dplyr::mutate(vis_class = ifelse(is.na(mark), "Others", mark))
+        dplyr::mutate(vis_class = ifelse(!is.na(mark), mark,
+                                         ifelse(is.numeric(mark), NA, "Others")))
     }
     ## ---------------------------------------------------------------------- 
     ## draw network via ggplot, and print into grid palette
@@ -148,11 +149,18 @@ grid_child_nebula <-
                            title_fill = title_palette[as.numeric(anno[["hierarchy"]])],
                            remove_nodes = remove_nodes,
                            ...)
+    ## if print into grid panel
     if(!print_into){
       return(p)
     }
+    ## remove legend or not
     p <- p + guides(size = ifelse(legend_size, "legend", "none"),
                              fill = ifelse(legend_fill, "legend", "none"))
+    ## color bar
+    if(class(class$vis_class) == "numeric" & legend_fill){
+      p <- p + guides(fill = guide_colorbar(direction = "horizontal", barheight = 0.3))
+    }
+    ## rm legend labal
     if(remove_legend_lab){
       p <- p + labs(size = "", fill = "")
     }
@@ -184,7 +192,7 @@ base_vis_c_nebula <-
       ## compound MS2 similarity mapping as edge width
       geom_edge_fan(aes(edge_width = similarity), color = "black", show.legend = F) + 
       ## nodes size mapping as compound idenfication similarity
-      geom_node_point(aes(size = ifelse(is.na(tanimotoSimilarity) == F,
+      geom_node_point(aes(size = ifelse(!is.na(tanimotoSimilarity),
                                                 ## if the tanimotoSimilarity is NA, set to 0.2
                                                 tanimotoSimilarity, 0.2),
                                   ## nodes fill. mapping as classification or custom mark
