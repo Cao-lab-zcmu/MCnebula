@@ -136,6 +136,7 @@ base_vis_nodes <-
                          midd = (x + value/2) * n_factor,
                          width = value * n_factor)
       ## add pie plot into ggplot2 project
+      names(palette_ppcp) <- class_index
       p <- p + geom_tile(data = ratio_df, size = 0.2, color = "white",
                                   aes(y = -2.5, x = midd, width = width, height = 2.5, fill = group)) +
         ## add 'fill' palette

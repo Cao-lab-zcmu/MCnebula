@@ -24,7 +24,7 @@ method_pick_formula_excellent <-
            dir = NULL,
            exclude_element = NULL,
            ppm_error = 20,
-           fc = 1.5
+           fc = NA
            ){
     ## ----------------------------------------------------------------------
     if(length(dir) >= 1){

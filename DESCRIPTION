@@ -19,7 +19,6 @@ Imports:
     igraph,
     MSnbase,
     pbapply,
-    RCurl,
     reshape2,
     stringr,
     svglite,
@@ -36,7 +35,8 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0),
     Retip,
-    archive
+    archive,
+    RCurl
 VignetteBuilder: knitr
 Depends: 
     R (>= 2.10)
