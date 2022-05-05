@@ -73,7 +73,7 @@ separate_nebula <-
     edges <- better_vis_nebula(edges, max_edges = max_edges)
     child_nebula <- igraph::graph_from_data_frame(edges, directed = T, vertices = nodes)
     if(write_output == T){
-      write_graph(child_nebula,
+      igraph::write_graph(child_nebula,
                   file = paste0(output, "/", name, ".", output_format),
                   format = output_format)
       if(write_extra == T){

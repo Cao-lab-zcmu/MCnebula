@@ -77,7 +77,7 @@ generate_parent_nebula <-
       if(file.exists(dir) == F){
         dir.create(dir)
       }
-      write_graph(parent_nebula,
+      igraph::write_graph(parent_nebula,
                   file = paste0(dir, "/", "parent_nebula.", output_format),
                   format = output_format)
       write_tsv(edges, paste0(dir, "/", "parent_nebula_edges.tsv"))
