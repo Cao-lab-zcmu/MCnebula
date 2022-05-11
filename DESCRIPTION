@@ -27,7 +27,6 @@ Imports:
 Suggests: 
     rsvg,
     ChemmineOB,
-    ChemmineR,
     grImport2,
     ggimage,
     gridExtra,

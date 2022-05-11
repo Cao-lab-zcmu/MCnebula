@@ -49,6 +49,8 @@ annotate_child_nebulae <-
            merge_image = T,
            return_plot = F,
            nodes_mark = NA,
+           global.node.size = 1,
+           theme_args = NA,
            ...
            ){
     cat("[INFO] MCnebula run: annotate_child_nebulae\n")
@@ -97,6 +99,7 @@ annotate_child_nebulae <-
                            save_layout_df = envir_layout,
                            ## remove origin nodes
                            remove_nodes = remove_nodes, 
+                           theme_args = theme_args,
                            ...)
     ## ---------------------------------------------------------------------- 
     ## whether plot pie diagram
@@ -153,7 +156,8 @@ annotate_child_nebulae <-
          requireNamespace("gridExtra", quietly = T)){
         ## remove legend of size
         p <- p + guides(size = "none")
-        merge_image(p, envir_layout$layout_n, tmp_ppcp)
+        merge_image(p, envir_layout$layout_n, tmp_ppcp, 
+                    global.node.size = global.node.size)
       }
     }
     ## ------------------------------------------------------------------------
@@ -198,6 +202,7 @@ merge_image <-
            p, ## ggplot2 object
            layout_n,
            tmp_ppcp,
+           global.node.size = 1,
            ...
            ){
     ## ---------------------------------------------------------------------- 
@@ -215,7 +220,7 @@ merge_image <-
     ## calculate width and height for subview, according to attributes of tanimotoSimilarity
     df <- dplyr::mutate(df,
                         width = ifelse(is.na(tanimotoSimilarity) == T, 1,
-                                       1 + tanimotoSimilarity),
+                                       1 + tanimotoSimilarity) * global.node.size,
                         height = width)
     ## ---------------------------------------------------------------------- 
     ## as subview 

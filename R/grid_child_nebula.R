@@ -12,6 +12,7 @@ grid_child_nebula <-
            legend_fill = F,
            legend_size = F,
            remove_legend_lab = F,
+           theme_args = NA,
            ...
            ){
     ## reformat graph, add with class
@@ -42,6 +43,7 @@ grid_child_nebula <-
                            title = anno[["nebula_index"]],
                            title_fill = title_palette[as.numeric(anno[["hierarchy"]])],
                            remove_nodes = remove_nodes,
+                           theme_args = theme_args,
                            ...)
     ## if print into grid panel
     if(!print_into){
@@ -73,6 +75,7 @@ base_vis_c_nebula <-
            remove_nodes = F,
            legend_position = "right",
            scale_fill_expression = "scale_fill_manual(values = palette)",
+           theme_args = NA,
            ...
            ){
     if(is.vector(attr(palette, "name")))
@@ -80,6 +83,30 @@ base_vis_c_nebula <-
     ## ------------------------------------- 
     if(remove_nodes){
       nodes_size_range = 0
+    }
+    ## ------------------------------------- 
+    theme_args.default <- list(
+        text = element_text(family = "Times"),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.background = element_rect(fill = "white"),
+        panel.grid = element_blank(),
+        ## cunstom defined legend position
+        legend.position = legend_position,
+        plot.title = ggtext::element_textbox(
+          ## nebula name textbox
+          size = title_size,
+          color = "white", fill = title_fill, box.color = "white",
+          halign = 0.5, linetype = 1, r = unit(5, "pt"), width = unit(1, "npc"),
+          padding = margin(2, 0, 1, 0), margin = margin(3, 3, 3, 3)
+        ))
+    ## ------------------------------------- 
+    if(is.list(theme_args)){
+      theme_args.default <- theme_args.default[!names(theme_args.default) %in% names(theme_args)]
+      theme_args <- c(theme_args.default, theme_args)
+    }else{
+      theme_args <- theme_args.default
     }
     ## ------------------------------------- 
     p <- ggraph(nebula) + 
@@ -102,24 +129,8 @@ base_vis_c_nebula <-
       guides(fill = guide_legend(override.aes = list(size = 5))) +
       ## the title is the annotation of classification
       ggtitle(stringr::str_wrap(title, width = 30)) +
-      labs(size = "Tanimoto\nsimilarity", fill = "Compound class") +
+      labs(size = "Tanimoto\nsimilarity", fill = "Compound mark") +
       theme_grey() +
-      theme(
-        text = element_text(family = "Times"),
-        axis.ticks = element_blank(),
-        axis.text = element_blank(),
-        axis.title = element_blank(),
-        panel.background = element_rect(fill = "white"),
-        ## cunstom defined legend position
-        legend.position = legend_position,
-        panel.grid = element_blank(),
-        plot.title = ggtext::element_textbox(
-          ## nebula name textbox
-          size = title_size,
-          color = "white", fill = title_fill, box.color = "white",
-          halign = 0.5, linetype = 1, r = unit(5, "pt"), width = unit(1, "npc"),
-          padding = margin(2, 0, 1, 0), margin = margin(3, 3, 3, 3)
-        )
-      )
+      do.call(theme, theme_args)
     return(p)
   }
