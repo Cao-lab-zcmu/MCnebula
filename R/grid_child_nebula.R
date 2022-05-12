@@ -70,7 +70,9 @@ base_vis_c_nebula <-
            palette = .MCn.palette,
            title_fill = "grey",
            nodes_size_range = c(3, 7),
+           nodes_stroke = 0.2,
            edges_width_range = c(0.1, 0.7),
+           edges_color = "black",
            title_size = 20,
            remove_nodes = F,
            legend_position = "right",
@@ -111,14 +113,15 @@ base_vis_c_nebula <-
     ## ------------------------------------- 
     p <- ggraph(nebula) + 
       ## compound MS2 similarity mapping as edge width
-      geom_edge_fan(aes(edge_width = similarity), color = "black", show.legend = F) + 
+      geom_edge_fan(aes(edge_width = similarity), color = edges_color, show.legend = F) + 
       ## nodes size mapping as compound idenfication similarity
       geom_node_point(aes(size = ifelse(!is.na(tanimotoSimilarity),
                                                 ## if the tanimotoSimilarity is NA, set to 0.2
                                                 tanimotoSimilarity, 0.2),
                                   ## nodes fill. mapping as classification or custom mark
                                   fill = vis_class),
-                              shape = 21) + 
+                              shape = 21,
+                              stroke = nodes_stroke) + 
       ## for custum commound expression
       eval(parse(text = scale_fill_expression)) +
       ## set range for edge width

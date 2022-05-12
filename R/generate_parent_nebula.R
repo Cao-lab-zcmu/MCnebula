@@ -57,7 +57,7 @@ generate_parent_nebula <-
         cat("## generate_parent_nebula: file.exists(edges_file) == T. Escape from time-consuming computation\n")
         edges <- read_tsv(edges_file) %>%
           dplyr::mutate_at(c(".id_1", ".id_2"), as.character) %>%
-          dplyr::mutate_at(c(colnames(edges)[3:4]), as.numeric)
+          dplyr::mutate_at(c(colnames(.)[3:4]), as.numeric)
       }else{
         cat("## generate_parent_nebula: method_formula_based_spec_compare\n")
         edges = method_formula_based_spec_compare(edge_filter = edge_filter, cpu_cores = cpu_cores, ...)
@@ -74,7 +74,7 @@ generate_parent_nebula <-
     }
     if(rm_parent_isolate_nodes){
       non_iso_nodes <- unique(c(edges$.id_1, edges$.id_2))
-      nodes.parent <- dplyr::filter(.id %in% all_of(non_iso_nodes))
+      nodes.parent <- dplyr::filter(nodes, .id %in% all_of(non_iso_nodes))
     }else{
       nodes.parent <- nodes
     }
