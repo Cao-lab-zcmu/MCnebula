@@ -49,7 +49,7 @@ annotate_child_nebulae <-
            merge_image = T,
            return_plot = F,
            nodes_mark = NA,
-           global.node.size = 1,
+           global.node.size = 0.6,
            theme_args = NA,
            ...
            ){

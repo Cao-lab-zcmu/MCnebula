@@ -58,6 +58,7 @@ visualize_parent_nebula <-
       dplyr::rename(vis_class = name)
     ## reformat graph, add with class
     graph <- tidygraph::as_tbl_graph(graph)
+    ## ---------------------------------------------------------------------- 
     nodes <- graph %>%
       tidygraph::activate(nodes) %>%
       merge(class, by.x = "name" , by.y = ".id", all.x=TRUE, sort=F) %>%
@@ -68,6 +69,7 @@ visualize_parent_nebula <-
       ## rename the col of value of compare spectra
       dplyr::rename(similarity = 3) %>%
       dplyr::as_tibble()
+    ## ---------------------------------------------------------------------- 
     graph <- tidygraph::tbl_graph(nodes = nodes, edges = edges)
     ## create network layout
     layout_n <- create_layout(graph, layout = layout, ...)
