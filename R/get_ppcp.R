@@ -32,9 +32,9 @@ get_ppcp <-
            ...
            ){
     ## get dir path
-    if(is.null(dir) == T & is.null(key_id) == T){
+    if(is.null(dir) & is.null(key_id)){
       return()
-    }else if(is.null(dir) == T){
+    }else if(is.null(dir)){
       dir <- get_dir(key_id)
     }
     ## ---------------------------------------------------
@@ -52,11 +52,11 @@ get_ppcp <-
     ppcp <- read_fpt(file)
     ## ---------------------------------------------------
     ## reformat section
-    if(reformat == F){
+    if(!reformat){
       return(ppcp)
     }
     ## check meta list
-    if(exists(".MCn.class_tree_list") == F){
+    if(!exists(".MCn.class_tree_list")){
       build_classes_tree_list(class_index = class_index)
     }
     ## merge with meta table, and filter

@@ -85,9 +85,9 @@ annotate_child_nebulae <-
     envir_layout <- new.env() 
     ## set to remove nodes or not (set to 0, remove)
     if(plot_ppcp | plot_structure){
-      remove_nodes = T
+      remove_nodes <- T
     }else{
-      remove_nodes = F
+      remove_nodes <- F
     }
     ## plot origin network (child network, with legend)
     p <- grid_child_nebula(.MCn.child_graph_list[[nebula_name]],
@@ -104,9 +104,9 @@ annotate_child_nebulae <-
     ## ---------------------------------------------------------------------- 
     ## whether plot pie diagram
     if(is.data.frame(ratio_df)){
-      plot_ratio = T
+      plot_ratio <- T
     }else{
-      plot_ratio = F
+      plot_ratio <- F
     }
     ## ------------------------------------------------------------------------
     ## tmp dir
@@ -125,7 +125,7 @@ annotate_child_nebulae <-
     if(requireNamespace("ChemmineOB", quietly = T)){
       ## structure
       tmp_stru <- paste0(tmp_dir, "/", "structure")
-      if(file.exists(tmp_stru) == F){
+      if(!file.exists(tmp_stru)){
         dir.create(tmp_stru)
       }
       if(plot_structure){
