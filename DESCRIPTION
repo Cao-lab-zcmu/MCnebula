@@ -35,7 +35,8 @@ Suggests:
     testthat (>= 3.0.0),
     Retip,
     archive,
-    RCurl
+    RCurl,
+    ggpubr
 VignetteBuilder: knitr
 Depends: 
     R (>= 2.10)

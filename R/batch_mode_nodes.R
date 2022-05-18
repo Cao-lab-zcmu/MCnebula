@@ -207,6 +207,7 @@ base_vis_nodes <-
         legend <- ggplot(ppcp, aes(x = num, y = V1, fill = name)) +
           geom_col() +
           labs(fill = "Structural classes") +
+          theme_minimal() +
           scale_fill_manual(values = palette_ppcp) +
           theme(text = element_text(family = "Times", face = "bold"),
                 legend.key.height = unit(0.8, "cm")
