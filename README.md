@@ -1,17 +1,14 @@
 # MCnebula
 
-&ensp;&ensp; 
 MCnebula algorithm integration in R.
 
 ## Installation 
 
-&ensp;&ensp; 
 The following installation has been tested in Pop!_OS 20.04 (Ubuntu 20.04).
 
 ### Install R
 
-&ensp;&ensp; 
-Install R. We have tested MCnebula in R version 4.2 and 4.1. Maybe R version ≥ 4.0 is feasible.
+We have tested MCnebula in R version 4.2 and 4.1. Maybe R version ≥ 4.0 is feasible.
 Herein, the codes are giving an example with installing R 4.2.
 In bash:
 
@@ -39,7 +36,6 @@ sudo apt install libfontconfig1-dev librsvg2-dev libmagick++-dev
 
 ### Install dependent R packages for MCnebula
 
-&ensp;&ensp; 
 Some data processing tools:
 
 ```
@@ -48,7 +44,6 @@ install.packages(c("data.table", "dplyr", "ggplot2",
                    "pbapply", "ggsci"))
 ```
 
-&ensp;&ensp; 
 Installing R packages from Bioconductor:
 
 ```
@@ -57,12 +52,10 @@ if (!require("BiocManager", quietly = TRUE))
 BiocManager::install(c("MSnbase", "ChemmineOB"))
 ```
 
-&ensp;&ensp; 
 Of note, for current, 'ChemmineOB' is only available in Linux.
 Fortunately, 'ChemmineOB' is **non-essential** for MCnebula.
 However, the chemical structure mapping in child-nebula is depending on 'ChemmineOB'.  
 
-&ensp;&ensp; 
 Installing graphic tools:
 
 ```
@@ -71,7 +64,6 @@ install.packages("igraph", "ggraph", "svglite",
                  "ggimage", "ggtext", "ggsci")
 ```
 
-&ensp;&ensp; 
 For installing packages in github:
 
 ```
@@ -86,3 +78,77 @@ MCnebula is available in github:
 devtools::install_github("Cao-lab-zcmu/MCnebula")
 ```
 
+## Usage
+
+Loading library.
+
+```
+library(ggplot2)
+library(ggraph)
+library(grid)
+library(MCnebula)
+```
+
+MCnebula perform data collating and integration in SIRIUS project.  
+
+First, user should initialize MCnebula at the directory of SIRIUS project.
+
+```
+path <- "my.sirius.project"
+initialize_mcnebula(path)
+```
+
+The above will set some global var:
+
+```
+> .MCn.
+.MCn.output         .MCn.palette_label  .MCn.palette_stat   .MCn.sirius
+.MCn.palette        .MCn.palette_ppcp   .MCn.results
+```
+
+Then, for data collating:
+
+```
+collate_structure()
+build_classes_tree_list()
+collate_ppcp(min_possess = 30, max_possess_pct = 0.07)
+```
+
+As well, the above commands will done with some global vars (data.frame or list) of which the name
+begin with `.MCn.`.  
+
+Third, for generate chemical nebulae (network):
+
+```
+generate_parent_nebula()
+generate_child_nebulae()
+```
+
+Fourth, visualization for nebulae:
+
+```
+visualize_parent_nebula()
+visualize_child_nebulae(width = 15, height = 20, nodes_size_range = c(2, 4))
+```
+
+Last, users are encouraged for in-depth visualization of child-nebula:
+
+```
+annotate_child_nebulae(
+  ## string, i.e. class name in nebula-index
+  nebula_name,
+  layout = "fr",
+  ## a table to mark color of nodes
+  nodes_mark = mark_df,
+  ## manually define the color of nodes
+  palette = mark_palette,
+  ## feature quantification table
+  ratio_df = mean.feature_stat,
+  palette_stat = stat_palette,
+  global.node.size = 0.8,
+  ## the args of `ggplot::theme`
+  theme_args = list(panel.background = element_rect(),
+    panel.grid = element_line()
+  )
+)
+```
