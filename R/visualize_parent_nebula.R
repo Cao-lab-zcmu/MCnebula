@@ -61,7 +61,7 @@ visualize_parent_nebula <-
     ## ---------------------------------------------------------------------- 
     nodes <- graph %>%
       tidygraph::activate(nodes) %>%
-      merge(class, by.x = "name" , by.y = ".id", all.x=TRUE, sort=F) %>%
+      merge(class, by.x = "name" , by.y = ".id", all.x = TRUE, sort = F) %>%
       dplyr::mutate(vis_class = ifelse(is.na(vis_class) == T, "Unknown", vis_class)) %>%
       dplyr::as_tibble()
     edges <- graph %>%
@@ -105,7 +105,7 @@ base_vis_p_nebula <-
       scale_fill_manual(values = palette) +
       scale_edge_width(range = c(0.1, 0.7)) + 
       guides(fill = guide_legend(override.aes = list(size = 5))) +
-      labs(fill="Class", size="Tanimoto similarity") +
+      labs(fill = "Class", size = "Tanimoto similarity") +
       ## ------------------------------------- 
       theme_grey() +
       theme(

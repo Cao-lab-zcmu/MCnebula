@@ -3,10 +3,10 @@ extract_rdata_list <-
            rdata,
            names = NA
            ){
-    if(file.exists(rdata) == F)
+    if(!file.exists(rdata))
       return()
     load(rdata)
-    if(is.na(names[1]) == F){
+    if(!is.na(names[1])){
       list <- list[names(list) %in% names]
     }
     return(list)

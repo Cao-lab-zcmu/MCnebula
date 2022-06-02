@@ -24,23 +24,7 @@ pubchem_get_synonyms <-
     if(length(cid) == 0)
       return()
     ## ------------------------------------- 
-    ## if grouped, the rest number
-    rest <- length(cid) %% group_number
-    ## assign group
-    group <- matrix(cid[1:(length(cid) - rest)], ncol = group_number) %>% 
-      ## use apply to multiple list
-      apply(1, c, simplify = F) %>% 
-      ## gather the rest cid
-      c(., list(tail(cid, n = rest))) %>% 
-      ## add group name
-      mapply(FUN = function(vec, name){
-               attr(vec, "name") <- name
-               return(vec)
-           }, ., paste0("G", 1:length(.)),
-           SIMPLIFY = F)
-    ## ------------------------------------- 
-    if(rest == 0)
-      group <- group[1:(length(group) - 1)]
+    group <- grouping_vec2list(cid, group_number = group_number)
     ## ------------------------------------- 
     pbapply::pblapply(group, base_pubchem_get_synonyms,
                       dir = dir, cl = curl_cl, ...)
@@ -101,4 +85,35 @@ base_pubchem_get_synonyms <-
     ## save data
     write_tsv(text, filename = file)
   }
-
+## ------------------------------------- 
+grouping_vec2list <- 
+  function(
+           vector,
+           group_number,
+           byrow = F
+           ){
+    if(length(vector) < group_number){
+      attr(vector, "name") <- "G1"
+      return(list(vector))
+    }
+    ## if grouped, the rest number
+    rest <- length(vector) %% group_number
+    ## assign group
+    group <- matrix(vector[1:(length(vector) - rest)],
+                    ncol = group_number,
+                    byrow = byrow) %>% 
+      ## use apply to multiple list
+      apply(1, c, simplify = F) %>% 
+      ## gather the rest vector
+      c(., list(tail(vector, n = rest))) %>% 
+      ## add group name
+      mapply(FUN = function(vec, name){
+               attr(vec, "name") <- name
+               return(vec)
+           }, ., paste0("G", 1:length(.)),
+           SIMPLIFY = F)
+    ## ------------------------------------- 
+    if(rest == 0)
+      group <- group[1:(length(group) - 1)]
+    return(group)
+  }
