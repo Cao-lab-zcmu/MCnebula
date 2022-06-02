@@ -120,7 +120,7 @@ begin with `.MCn.`.
 Third, for generate chemical nebulae (network):
 
 ```
-generate_parent_nebula()
+generate_parent_nebula(rm_parent_isolate_nodes = T)
 generate_child_nebulae()
 ```
 
@@ -134,7 +134,7 @@ visualize_child_nebulae(width = 15, height = 20, nodes_size_range = c(2, 4))
 Last, users are encouraged for in-depth visualization of child-nebula:
 
 ```
-annotate_child_nebulae(
+annotate_child_nebula(
   ## string, i.e. class name in nebula-index
   nebula_name,
   layout = "fr",
