@@ -16,14 +16,18 @@ Herein, the codes are giving an example with installing R 4.2.
 In bash:
 
 ```{bash}
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
+sudo apt-key adv \
+--keyserver keyserver.ubuntu.com \
+--recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+sudo add-apt-repository \
+"deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/"
 sudo apt-get update
 sudo apt install --no-install-recommends r-base
 ```
 
 ### Install dependencies
 
+In bash:
 ```
 ## Libraries for installing 'usethis' and 'devtools'.
 sudo apt install libssl-dev libcurl4-openssl-dev
@@ -39,7 +43,9 @@ sudo apt install libfontconfig1-dev librsvg2-dev libmagick++-dev
 Some data processing tools:
 
 ```
-install.packages(c("data.table", "dplyr", "ggplot2", "stringr", "tidyr", "reshape2", "pbapply", "ggsci"))
+install.packages(c("data.table", "dplyr", "ggplot2",
+                   "stringr", "tidyr", "reshape2",
+                   "pbapply", "ggsci"))
 ```
 
 &ensp;&ensp; 
@@ -60,7 +66,9 @@ However, the chemical structure mapping in child-nebula is depending on 'Chemmin
 Installing graphic tools:
 
 ```
-install.packages("igraph", "ggraph", "svglite", "tidygraph", "rsvg", "grImport2", "ggimage", "ggtext", "ggsci")
+install.packages("igraph", "ggraph", "svglite",
+                 "tidygraph", "rsvg", "grImport2",
+                 "ggimage", "ggtext", "ggsci")
 ```
 
 &ensp;&ensp; 
