@@ -80,6 +80,8 @@ devtools::install_github("Cao-lab-zcmu/MCnebula")
 
 ## Usage
 
+### Main functions
+
 Loading library.
 
 ```
@@ -232,3 +234,11 @@ annotate_child_nebula(
   return_plot = F
 )
 ```
+
+### Other functions
+
+...
+
+### Standalone tools
+
+...
