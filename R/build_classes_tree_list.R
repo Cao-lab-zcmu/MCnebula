@@ -1,8 +1,7 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param class_index PARAM_DESCRIPTION, Default: 'canopus.tsv'
-#' @param path PARAM_DESCRIPTION, Default: .MCn.sirius
-#' @return OUTPUT_DESCRIPTION
+#' @title build_classes_tree_list
+#' @description According to source data (table) of classification in SIRIUS project to build list in hierarchy.
+#' @param class_index Character, source data name, Default: 'canopus.tsv'
+#' @param path SIRIUS project path, Default: .MCn.sirius
 #' @details DETAILS
 #' @examples 
 #' \dontrun{

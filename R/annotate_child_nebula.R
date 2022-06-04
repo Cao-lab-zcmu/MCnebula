@@ -1,20 +1,22 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param nebula_name PARAM_DESCRIPTION
-#' @param compound_class_list PARAM_DESCRIPTION, Default: .MCn.nebula_class
-#' @param write_output PARAM_DESCRIPTION, Default: T
-#' @param output PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)
-#' @param layout PARAM_DESCRIPTION, Default: 'fr'
-#' @param height PARAM_DESCRIPTION, Default: 'auto'
-#' @param width PARAM_DESCRIPTION, Default: 'auto'
-#' @param plot_nodes_id PARAM_DESCRIPTION, Default: T
-#' @param plot_structure PARAM_DESCRIPTION, Default: T
-#' @param plot_ppcp PARAM_DESCRIPTION, Default: T
-#' @param ratio_df PARAM_DESCRIPTION, Default: NULL
-#' @param merge_image PARAM_DESCRIPTION, Default: T
-#' @param return_plot PARAM_DESCRIPTION, Default: F
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @title annotate_child_nebulae
+#' @description Visualization of structure, PPCP and statistic data in child-nebula.
+#' @param nebula_name Character. The name of child-nebula.
+#' @param compound_class_list A list, generaged by `collate_ppcp`, Default: .MCn.nebula_class
+#' @param write_output Logic. Write output to a directory, Default: T
+#' @param output Character, Default: paste0(.MCn.output, "/", .MCn.results)
+#' @param layout Character, 'igraph' layout, Default: 'fr'
+#' @param height A number, Default: 'auto'
+#' @param width A number, Default: 'auto'
+#' @param plot_nodes_id Logic, Default: T
+#' @param plot_structure Logic, Default: T
+#' @param plot_ppcp Logic, Default: T
+#' @param ratio_df A data.frame, Default: NA
+#' @param merge_image Logic, Default: T
+#' @param return_plot Logic, Default: F
+#' @param nodes_mark A is.data.frame, Default: NA
+#' @param global.node.size A number, Default: 0.6
+#' @param theme_args A list, Default: NA
+#' @param ... ...
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -23,16 +25,12 @@
 #'  }
 #' }
 #' @seealso 
-#'  \code{\link[dplyr]{filter}}, \code{\link[dplyr]{select}}, \code{\link[dplyr]{rename}}
+#'  \code{\link[dplyr]{filter}}, \code{\link[dplyr]{select}}, \code{\link[dplyr]{rename}}, \code{\link[dplyr]{mutate}}
 #'  \code{\link[data.table]{rbindlist}}
-#'  \code{\link[ggraph]{geom_node_text}}
-#'  \code{\link[ggplot2]{c("guide_bins", "guide_colourbar", "guide_coloursteps", "guide_legend", "guides", "guides")}}, \code{\link[ggplot2]{ggsave}}
 #' @rdname annotate_child_nebulae
 #' @export 
-#' @importFrom dplyr filter select rename
+#' @importFrom dplyr filter select rename mutate
 #' @importFrom data.table rbindlist
-#' @importFrom ggraph geom_node_text
-#' @importFrom ggplot2 guides ggsave
 annotate_child_nebulae <-
   function(
            nebula_name,
@@ -180,7 +178,6 @@ annotate_child_nebulae <-
       return(p)
     }
   }
-## function gather all subview
 gather_subview <-
   function(
            subview,
@@ -196,7 +193,6 @@ gather_subview <-
     return("Done")
     ##
   }
-## funtion merge image, involves nodes (may include ppcp bar), structure, and network layout (with edges)
 merge_image <-
   function(
            p, ## ggplot2 object
