@@ -1,7 +1,7 @@
 #' @title annotate_child_nebulae
 #' @description Visualization of structure, PPCP and statistic data in child-nebula.
-#' @param nebula_name Character. The name of Child-nebula.
-#' @param compound_class_list A list, Default: .MCn.nebula_class
+#' @param nebula_name Character. The name of child-nebula.
+#' @param compound_class_list A list, generaged by `collate_ppcp`, Default: .MCn.nebula_class
 #' @param write_output Logic. Write output to a directory, Default: T
 #' @param output Character, Default: paste0(.MCn.output, "/", .MCn.results)
 #' @param layout Character, 'igraph' layout, Default: 'fr'
@@ -16,8 +16,7 @@
 #' @param nodes_mark A is.data.frame, Default: NA
 #' @param global.node.size A number, Default: 0.6
 #' @param theme_args A list, Default: NA
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @param ... ...
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -45,28 +44,6 @@ annotate_child_nebulae <-
            plot_structure = T,
            plot_ppcp = T,
            ratio_df = NA,
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param p PARAM_DESCRIPTION
-#' @param layout_n PARAM_DESCRIPTION
-#' @param tmp_ppcp PARAM_DESCRIPTION
-#' @param global.node.size PARAM_DESCRIPTION, Default: 1
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @seealso 
-#'  \code{\link[dplyr]{select}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{filter}}
-#'  \code{\link[pbapply]{pbapply}}
-#' @rdname merge_image
-#' @export 
-#' @importFrom dplyr select mutate filter
-#' @importFrom pbapply pblapply pbmapply
            merge_image = T,
            return_plot = F,
            nodes_mark = NA,
@@ -201,28 +178,6 @@ annotate_child_nebulae <-
       return(p)
     }
   }
-## function gather all subview
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param subview PARAM_DESCRIPTION
-#' @param x PARAM_DESCRIPTION
-#' @param y PARAM_DESCRIPTION
-#' @param width PARAM_DESCRIPTION
-#' @param height PARAM_DESCRIPTION
-#' @param p PARAM_DESCRIPTION, Default: get("p", envir = get("envir_meta"))
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @seealso 
-#'  \code{\link[ggimage]{geom_subview}}
-#' @rdname gather_subview
-#' @export 
-#' @importFrom ggimage geom_subview
 gather_subview <-
   function(
            subview,
@@ -238,28 +193,6 @@ gather_subview <-
     return("Done")
     ##
   }
-## funtion merge image, involves nodes (may include ppcp bar), structure, and network layout (with edges)
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param p PARAM_DESCRIPTION
-#' @param layout_n PARAM_DESCRIPTION
-#' @param tmp_ppcp PARAM_DESCRIPTION
-#' @param global.node.size PARAM_DESCRIPTION, Default: 1
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @seealso 
-#'  \code{\link[dplyr]{select}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{filter}}
-#'  \code{\link[pbapply]{pbapply}}
-#' @rdname merge_image
-#' @importFrom dplyr select mutate filter
-#' @importFrom pbapply pblapply pbmapply
 merge_image <-
   function(
            p, ## ggplot2 object

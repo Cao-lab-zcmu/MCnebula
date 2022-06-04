@@ -1,16 +1,16 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param write_output PARAM_DESCRIPTION, Default: T
-#' @param output_format PARAM_DESCRIPTION, Default: 'graphml'
-#' @param output PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)
-#' @param edges_file PARAM_DESCRIPTION, Default: paste0(output, "/parent_nebula/parent_nebula_edges.tsv")
-#' @param edges_method PARAM_DESCRIPTION, Default: 'method_formula_based_spec_compare'
-#' @param nodes_attributes PARAM_DESCRIPTION, Default: .MCn.formula_set
-#' @param nodes_other_attributes PARAM_DESCRIPTION, Default: .MCn.structure_set
-#' @param edge_filter PARAM_DESCRIPTION, Default: 0.5
-#' @param cpu_cores PARAM_DESCRIPTION, Default: 8
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @title generate_parent_nebula
+#' @description According to formula dataset and structure dataset to generate parent-nebula graph
+#' @param write_output Logic, Default: T
+#' @param output_format Character, 'igraph' supported format, Default: 'graphml'
+#' @param output Character, Default: paste0(.MCn.output, "/", .MCn.results)
+#' @param edges_file Character, path to edges file, Default: paste0(output, "/parent_nebula/parent_nebula_edges.tsv")
+#' @param edges_method Character, Default: 'method_formula_based_spec_compare'
+#' @param nodes_attributes A data.frame, formula dataset, Default: .MCn.formula_set
+#' @param nodes_other_attributes A data.frame, structure dataset, Default: .MCn.structure_set
+#' @param rm_parent_isolate_nodes Logic, Default: F
+#' @param edge_filter A number, Default: 0.5
+#' @param cpu_cores A number, thread count, Default: 8
+#' @param ... ...
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -19,12 +19,12 @@
 #'  }
 #' }
 #' @seealso 
-#'  \code{\link[dplyr]{reexports}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{mutate_all}}, \code{\link[dplyr]{rename}}
-#'  \code{\link[igraph]{as_data_frame}}
+#'  \code{\link[dplyr]{reexports}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{mutate_all}}, \code{\link[dplyr]{rename}}, \code{\link[dplyr]{filter}}
+#'  \code{\link[igraph]{as_data_frame}}, \code{\link[igraph]{write_graph}}
 #' @rdname generate_parent_nebula
 #' @export 
-#' @importFrom dplyr as_tibble mutate mutate_at rename
-#' @importFrom igraph graph_from_data_frame
+#' @importFrom dplyr as_tibble mutate mutate_at rename filter
+#' @importFrom igraph graph_from_data_frame write_graph
 generate_parent_nebula <-
   function(
            write_output = T,

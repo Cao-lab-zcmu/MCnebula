@@ -1,22 +1,3 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param metadata PARAM_DESCRIPTION
-#' @param tmp_stru PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
-#' @details DETAILS
-#' @examples 
-#' \dontrun{
-#' if(interactive()){
-#'  #EXAMPLE1
-#'  }
-#' }
-#' @seealso 
-#'  \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{filter}}
-#'  \code{\link[pbapply]{pbapply}}
-#' @rdname batch_mode_structure
-#' @export 
-#' @importFrom dplyr mutate filter
-#' @importFrom pbapply pbmapply
 batch_mode_structure <-
   function(
            metadata,

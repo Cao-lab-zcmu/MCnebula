@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_parent_nebula.R
 \name{generate_parent_nebula}
 \alias{generate_parent_nebula}
-\title{FUNCTION_TITLE}
+\title{generate_parent_nebula}
 \usage{
 generate_parent_nebula(
   write_output = T,
@@ -19,31 +19,30 @@ generate_parent_nebula(
 )
 }
 \arguments{
-\item{write_output}{PARAM_DESCRIPTION, Default: T}
+\item{write_output}{Logic, Default: T}
 
-\item{output_format}{PARAM_DESCRIPTION, Default: 'graphml'}
+\item{output_format}{Character, 'igraph' supported format, Default: 'graphml'}
 
-\item{output}{PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)}
+\item{output}{Character, Default: paste0(.MCn.output, "/", .MCn.results)}
 
-\item{edges_file}{PARAM_DESCRIPTION, Default: paste0(output, "/parent_nebula/parent_nebula_edges.tsv")}
+\item{edges_file}{Character, path to edges file, Default: paste0(output, "/parent_nebula/parent_nebula_edges.tsv")}
 
-\item{edges_method}{PARAM_DESCRIPTION, Default: 'method_formula_based_spec_compare'}
+\item{edges_method}{Character, Default: 'method_formula_based_spec_compare'}
 
-\item{nodes_attributes}{PARAM_DESCRIPTION, Default: .MCn.formula_set}
+\item{nodes_attributes}{A data.frame, formula dataset, Default: .MCn.formula_set}
 
-\item{nodes_other_attributes}{PARAM_DESCRIPTION, Default: .MCn.structure_set}
+\item{nodes_other_attributes}{A data.frame, structure dataset, Default: .MCn.structure_set}
 
-\item{edge_filter}{PARAM_DESCRIPTION, Default: 0.5}
+\item{rm_parent_isolate_nodes}{Logic, Default: F}
 
-\item{cpu_cores}{PARAM_DESCRIPTION, Default: 8}
+\item{edge_filter}{A number, Default: 0.5}
 
-\item{...}{PARAM_DESCRIPTION}
-}
-\value{
-OUTPUT_DESCRIPTION
+\item{cpu_cores}{A number, thread count, Default: 8}
+
+\item{...}{...}
 }
 \description{
-FUNCTION_DESCRIPTION
+According to formula dataset and structure dataset to generate parent-nebula graph
 }
 \details{
 DETAILS
@@ -56,6 +55,6 @@ if(interactive()){
 }
 }
 \seealso{
-\code{\link[dplyr]{reexports}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{mutate_all}}, \code{\link[dplyr]{rename}}
-\code{\link[igraph]{as_data_frame}}
+\code{\link[dplyr]{reexports}}, \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{mutate_all}}, \code{\link[dplyr]{rename}}, \code{\link[dplyr]{filter}}
+\code{\link[igraph]{as_data_frame}}, \code{\link[igraph]{write_graph}}
 }

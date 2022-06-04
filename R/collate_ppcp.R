@@ -1,11 +1,11 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param dirs PARAM_DESCRIPTION, Default: 'all'
-#' @param write_output PARAM_DESCRIPTION, Default: T
-#' @param nebula_class PARAM_DESCRIPTION, Default: T
-#' @param nebula_index PARAM_DESCRIPTION, Default: T
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @title collate_ppcp
+#' @description Collate posterior probability of classification prediction (PPCP) from SIRIUS project
+#' and conduct integration to get nebula_class and nebula-index.
+#' @param dirs Vector, Default: 'all'
+#' @param write_output Logic, Default: T
+#' @param nebula_class Logic, Default: T
+#' @param nebula_index Logic, Default: T
+#' @param ... ...
 #' @details DETAILS
 #' @examples 
 #' \dontrun{

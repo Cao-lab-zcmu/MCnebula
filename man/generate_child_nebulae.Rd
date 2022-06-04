@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_child_nebulae.R
 \name{generate_child_nebulae}
 \alias{generate_child_nebulae}
-\title{FUNCTION_TITLE}
+\title{generate_child_nebulae}
 \usage{
 generate_child_nebulae(
   nodes = .MCn.parent_nodes,
@@ -15,25 +15,22 @@ generate_child_nebulae(
 )
 }
 \arguments{
-\item{nodes}{PARAM_DESCRIPTION, Default: .MCn.parent_nodes}
+\item{nodes}{A data.frame, Default: .MCn.parent_nodes}
 
-\item{edges}{PARAM_DESCRIPTION, Default: .MCn.parent_edges}
+\item{edges}{A data.frame, Default: .MCn.parent_edges}
 
-\item{max_edges}{PARAM_DESCRIPTION, Default: 5}
+\item{max_edges}{A number, Default: 5}
 
-\item{nebula_index}{PARAM_DESCRIPTION, Default: .MCn.nebula_index}
+\item{nebula_index}{A data.frame, Default: .MCn.nebula_index}
 
-\item{output}{PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)}
+\item{output}{Character, Default: paste0(.MCn.output, "/", .MCn.results)}
 
-\item{output_format}{PARAM_DESCRIPTION, Default: 'graphml'}
+\item{output_format}{Character, 'igraph' supported format, Default: 'graphml'}
 
-\item{...}{PARAM_DESCRIPTION}
-}
-\value{
-OUTPUT_DESCRIPTION
+\item{...}{...}
 }
 \description{
-FUNCTION_DESCRIPTION
+According to nodes and edges data of parent-nebula and nebula-index to generate child-nebula.
 }
 \details{
 DETAILS

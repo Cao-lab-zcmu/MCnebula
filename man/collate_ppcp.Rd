@@ -2,7 +2,7 @@
 % Please edit documentation in R/collate_ppcp.R
 \name{collate_ppcp}
 \alias{collate_ppcp}
-\title{FUNCTION_TITLE}
+\title{collate_ppcp}
 \usage{
 collate_ppcp(
   dirs = "all",
@@ -13,21 +13,19 @@ collate_ppcp(
 )
 }
 \arguments{
-\item{dirs}{PARAM_DESCRIPTION, Default: 'all'}
+\item{dirs}{Vector, Default: 'all'}
 
-\item{write_output}{PARAM_DESCRIPTION, Default: T}
+\item{write_output}{Logic, Default: T}
 
-\item{nebula_class}{PARAM_DESCRIPTION, Default: T}
+\item{nebula_class}{Logic, Default: T}
 
-\item{nebula_index}{PARAM_DESCRIPTION, Default: T}
+\item{nebula_index}{Logic, Default: T}
 
-\item{...}{PARAM_DESCRIPTION}
-}
-\value{
-OUTPUT_DESCRIPTION
+\item{...}{...}
 }
 \description{
-FUNCTION_DESCRIPTION
+Collate posterior probability of classification prediction (PPCP) from SIRIUS project
+and conduct integration to get nebula_class and nebula-index.
 }
 \details{
 DETAILS

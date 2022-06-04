@@ -1,9 +1,8 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param dirs PARAM_DESCRIPTION, Default: 'all'
-#' @param write_output PARAM_DESCRIPTION, Default: T
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @title collate_structure
+#' @description Collate chemical structure data from SIRIUS project
+#' @param dirs Vector, Default: 'all'
+#' @param write_output Logic, Default: T
+#' @param ... ...
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
@@ -14,12 +13,12 @@
 #' @seealso 
 #'  \code{\link[pbapply]{pbapply}}
 #'  \code{\link[data.table]{rbindlist}}
-#'  \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{reexports}}, \code{\link[dplyr]{filter}}
+#'  \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{relocate}}, \code{\link[dplyr]{reexports}}
 #' @rdname collate_structure
 #' @export 
-#' @importFrom pbapply pbsapply pblapply
+#' @importFrom pbapply pbsapply pbmapply
 #' @importFrom data.table rbindlist
-#' @importFrom dplyr mutate as_tibble filter
+#' @importFrom dplyr mutate relocate as_tibble
 collate_structure <- 
   function(
            dirs = "all",
@@ -76,7 +75,6 @@ grep_id <- function(x, sep = "_"){
   id <- v[length(v)]
   return(id)
 }
-## ----
 check_dir <- function(dir, path = .MCn.sirius, file = "compound.info"){
   if(file.exists(paste0(path, "/", dir, "/", file)) == T){
     check = T

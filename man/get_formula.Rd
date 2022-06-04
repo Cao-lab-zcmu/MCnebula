@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_formula.R
 \name{get_formula}
 \alias{get_formula}
-\title{FUNCTION_TITLE}
+\title{get_formula}
 \usage{
 get_formula(
   key_id,
@@ -16,26 +16,26 @@ get_formula(
 )
 }
 \arguments{
-\item{key_id}{PARAM_DESCRIPTION}
+\item{key_id}{Character.}
 
-\item{exclude_element}{PARAM_DESCRIPTION, Default: NULL}
+\item{exclude_element}{Vector, Default: NULL}
 
-\item{formula_method}{PARAM_DESCRIPTION, Default: 'top_zodiac'}
+\item{formula_method}{Character, Default: 'top_zodiac'}
 
-\item{rank}{PARAM_DESCRIPTION, Default: 1:5}
+\item{rank}{Vector of number, Default: 1:5}
 
-\item{ppm_error}{PARAM_DESCRIPTION, Default: 20}
+\item{ppm_error}{A bumber, Default: 20}
 
-\item{return_col}{PARAM_DESCRIPTION, Default: c("rank", "precursorFormula", "molecularFormula", "adduct", "ZodiacScore",
+\item{return_col}{Vector of character, Default: c("rank", "precursorFormula",
 "massErrorPrecursor(ppm)")}
 
-\item{...}{PARAM_DESCRIPTION}
+\item{...}{...}
 }
 \value{
-OUTPUT_DESCRIPTION
+A data.frame
 }
 \description{
-FUNCTION_DESCRIPTION
+A function to read table of formula data of feature in SIRIUS project.
 }
 \details{
 DETAILS

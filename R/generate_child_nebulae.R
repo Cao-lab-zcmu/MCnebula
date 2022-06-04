@@ -1,13 +1,12 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param nodes PARAM_DESCRIPTION, Default: .MCn.parent_nodes
-#' @param edges PARAM_DESCRIPTION, Default: .MCn.parent_edges
-#' @param max_edges PARAM_DESCRIPTION, Default: 5
-#' @param nebula_index PARAM_DESCRIPTION, Default: .MCn.nebula_index
-#' @param output PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)
-#' @param output_format PARAM_DESCRIPTION, Default: 'graphml'
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @title generate_child_nebulae
+#' @description According to nodes and edges data of parent-nebula and nebula-index to generate child-nebula.
+#' @param nodes A data.frame, Default: .MCn.parent_nodes
+#' @param edges A data.frame, Default: .MCn.parent_edges
+#' @param max_edges A number, Default: 5
+#' @param nebula_index A data.frame, Default: .MCn.nebula_index
+#' @param output Character, Default: paste0(.MCn.output, "/", .MCn.results)
+#' @param output_format Character, 'igraph' supported format, Default: 'graphml'
+#' @param ... ...
 #' @details DETAILS
 #' @examples 
 #' \dontrun{

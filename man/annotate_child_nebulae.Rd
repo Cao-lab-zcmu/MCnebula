@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotate_child_nebula.R
 \name{annotate_child_nebulae}
 \alias{annotate_child_nebulae}
-\title{FUNCTION_TITLE}
+\title{annotate_child_nebulae}
 \usage{
 annotate_child_nebulae(
   nebula_name,
@@ -25,39 +25,42 @@ annotate_child_nebulae(
 )
 }
 \arguments{
-\item{nebula_name}{PARAM_DESCRIPTION}
+\item{nebula_name}{Character. The name of child-nebula.}
 
-\item{compound_class_list}{PARAM_DESCRIPTION, Default: .MCn.nebula_class}
+\item{compound_class_list}{A list, generaged by \code{collate_ppcp}, Default: .MCn.nebula_class}
 
-\item{write_output}{PARAM_DESCRIPTION, Default: T}
+\item{write_output}{Logic. Write output to a directory, Default: T}
 
-\item{output}{PARAM_DESCRIPTION, Default: paste0(.MCn.output, "/", .MCn.results)}
+\item{output}{Character, Default: paste0(.MCn.output, "/", .MCn.results)}
 
-\item{layout}{PARAM_DESCRIPTION, Default: 'fr'}
+\item{layout}{Character, 'igraph' layout, Default: 'fr'}
 
-\item{height}{PARAM_DESCRIPTION, Default: 'auto'}
+\item{height}{A number, Default: 'auto'}
 
-\item{width}{PARAM_DESCRIPTION, Default: 'auto'}
+\item{width}{A number, Default: 'auto'}
 
-\item{plot_nodes_id}{PARAM_DESCRIPTION, Default: T}
+\item{plot_nodes_id}{Logic, Default: T}
 
-\item{plot_structure}{PARAM_DESCRIPTION, Default: T}
+\item{plot_structure}{Logic, Default: T}
 
-\item{plot_ppcp}{PARAM_DESCRIPTION, Default: T}
+\item{plot_ppcp}{Logic, Default: T}
 
-\item{ratio_df}{PARAM_DESCRIPTION, Default: NULL}
+\item{ratio_df}{A data.frame, Default: NA}
 
-\item{merge_image}{PARAM_DESCRIPTION, Default: T}
+\item{merge_image}{Logic, Default: T}
 
-\item{return_plot}{PARAM_DESCRIPTION, Default: F}
+\item{return_plot}{Logic, Default: F}
 
-\item{...}{PARAM_DESCRIPTION}
-}
-\value{
-OUTPUT_DESCRIPTION
+\item{nodes_mark}{A is.data.frame, Default: NA}
+
+\item{global.node.size}{A number, Default: 0.6}
+
+\item{theme_args}{A list, Default: NA}
+
+\item{...}{...}
 }
 \description{
-FUNCTION_DESCRIPTION
+Visualization of structure, PPCP and statistic data in child-nebula.
 }
 \details{
 DETAILS
@@ -70,8 +73,6 @@ if(interactive()){
 }
 }
 \seealso{
-\code{\link[dplyr]{filter}}, \code{\link[dplyr]{select}}, \code{\link[dplyr]{rename}}
+\code{\link[dplyr]{filter}}, \code{\link[dplyr]{select}}, \code{\link[dplyr]{rename}}, \code{\link[dplyr]{mutate}}
 \code{\link[data.table]{rbindlist}}
-\code{\link[ggraph]{geom_node_text}}
-\code{\link[ggplot2]{c("guide_bins", "guide_colourbar", "guide_coloursteps", "guide_legend", "guides", "guides")}}, \code{\link[ggplot2]{ggsave}}
 }

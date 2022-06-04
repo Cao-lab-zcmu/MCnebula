@@ -2,20 +2,17 @@
 % Please edit documentation in R/build_classes_tree_list.R
 \name{build_classes_tree_list}
 \alias{build_classes_tree_list}
-\title{FUNCTION_TITLE}
+\title{build_classes_tree_list}
 \usage{
 build_classes_tree_list(class_index = "canopus.tsv", path = .MCn.sirius)
 }
 \arguments{
-\item{class_index}{PARAM_DESCRIPTION, Default: 'canopus.tsv'}
+\item{class_index}{Character, source data name, Default: 'canopus.tsv'}
 
-\item{path}{PARAM_DESCRIPTION, Default: .MCn.sirius}
-}
-\value{
-OUTPUT_DESCRIPTION
+\item{path}{SIRIUS project path, Default: .MCn.sirius}
 }
 \description{
-FUNCTION_DESCRIPTION
+According to source data (table) of classification in SIRIUS project to build list in hierarchy.
 }
 \details{
 DETAILS

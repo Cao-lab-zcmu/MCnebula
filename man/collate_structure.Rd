@@ -2,22 +2,19 @@
 % Please edit documentation in R/collate_structure.R
 \name{collate_structure}
 \alias{collate_structure}
-\title{FUNCTION_TITLE}
+\title{collate_structure}
 \usage{
 collate_structure(dirs = "all", write_output = T, ...)
 }
 \arguments{
-\item{dirs}{PARAM_DESCRIPTION, Default: 'all'}
+\item{dirs}{Vector, Default: 'all'}
 
-\item{write_output}{PARAM_DESCRIPTION, Default: T}
+\item{write_output}{Logic, Default: T}
 
-\item{...}{PARAM_DESCRIPTION}
-}
-\value{
-OUTPUT_DESCRIPTION
+\item{...}{...}
 }
 \description{
-FUNCTION_DESCRIPTION
+Collate chemical structure data from SIRIUS project
 }
 \details{
 DETAILS
@@ -32,5 +29,5 @@ if(interactive()){
 \seealso{
 \code{\link[pbapply]{pbapply}}
 \code{\link[data.table]{rbindlist}}
-\code{\link[dplyr]{mutate}}, \code{\link[dplyr]{reexports}}, \code{\link[dplyr]{filter}}
+\code{\link[dplyr]{mutate}}, \code{\link[dplyr]{relocate}}, \code{\link[dplyr]{reexports}}
 }

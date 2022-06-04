@@ -1,14 +1,15 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param key_id PARAM_DESCRIPTION
-#' @param exclude_element PARAM_DESCRIPTION, Default: NULL
-#' @param formula_method PARAM_DESCRIPTION, Default: 'top_zodiac'
-#' @param rank PARAM_DESCRIPTION, Default: 1:5
-#' @param ppm_error PARAM_DESCRIPTION, Default: 20
-#' @param return_col PARAM_DESCRIPTION, Default: c("rank", "precursorFormula", "molecularFormula", "adduct", "ZodiacScore", 
+#' @title get_formula
+#' @description A function to read table of formula data of feature in SIRIUS project.
+#' @param key_id Character.
+#' @param exclude_element Vector, Default: NULL
+#' @param formula_method Character, Default: 'top_zodiac'
+#' @param rank Vector of number, Default: 1:5
+#' @param ppm_error A bumber, Default: 20
+#' @param return_col Vector of character, Default: c("rank", "precursorFormula",
+# '   "molecularFormula", "adduct", "ZodiacScore", 
 #'    "massErrorPrecursor(ppm)")
-#' @param ... PARAM_DESCRIPTION
-#' @return OUTPUT_DESCRIPTION
+#' @param ... ...
+#' @return A data.frame
 #' @details DETAILS
 #' @examples 
 #' \dontrun{
