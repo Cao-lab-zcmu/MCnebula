@@ -109,9 +109,46 @@ The above will set some global var:
 Then, for data collating:
 
 ```
-collate_structure()
+collate_structure(
+  exclude_element = c("Cl", "S", "P"),
+  ppm_error = 20
+)
 build_classes_tree_list()
-collate_ppcp(min_possess = 30, max_possess_pct = 0.07)
+collate_ppcp(
+  nebula_class = T,
+  ## ------------------------------------- 
+  ## detail control for nebula-class
+  ## level 5, subclass, class, superclass
+  hierarchy_priority = c(6, 5, 4, 3),
+  max_classes = NA,
+  ## ------------------------------------- 
+  ## summarise nebula-index
+  nebula_index = T,
+  ## ------------------------------------- 
+  ## detail control for nebula-index
+  min_possess = 30,
+  max_possess_pct = 0.07,
+  filter_identical = c("top_hierarchy" = 4),
+  identical_factor = 0.7,
+  ## following maybe remove lots of classes with many low score structures,
+  ## if not, set NA
+  ## ------------------ 
+  filter_via_struc_score = "tanimotoSimilarity", 
+  struc_score_cutoff = 0.3,
+  min_reached_pct = 0.6,
+  ## ------------------ 
+  rm_position_describe_class = T
+  ## ------------------------------------- 
+)
+```
+
+`collate_ppcp` is flexible with multiple augments. In addition, ignore the complexity, user can jsut run likewise:
+
+```
+collate_ppcp(
+  min_possess = 30,
+  max_possess_pct = 0.2
+)
 ```
 
 As well, the above commands will done with some global vars (data.frame or list) of which the name
@@ -120,15 +157,34 @@ begin with `.MCn.`.
 Third, for generate chemical nebulae (network):
 
 ```
-generate_parent_nebula(rm_parent_isolate_nodes = T)
-generate_child_nebulae()
+generate_parent_nebula(
+  rm_parent_isolate_nodes = T
+)
+generate_child_nebulae(
+  max_edges = 5,
+  ## this will write a output of .graphml, which support by Cytoscape.
+  output_format = "graphml"
+)
 ```
 
 Fourth, visualization for nebulae:
 
 ```
-visualize_parent_nebula()
-visualize_child_nebulae(width = 15, height = 20, nodes_size_range = c(2, 4))
+visualize_parent_nebula(
+  layout = "mds",
+  ## map nodes color with superclass
+  nodes_color = c("hierarchy" = 3)
+)
+visualize_child_nebulae(
+  layout = "fr",
+  ## herein, you can mark some features with specific color.
+  ## if not, just ignore the augment.
+  nodes_mark = data.frame(
+    .id = c(1, 300, 500),
+    mark = c("biomarker1", "biomarker2", "biomarker3")
+  ),
+  nodes_size_range = c(2, 4)
+)
 ```
 
 Last, users are encouraged for in-depth visualization of child-nebula:
