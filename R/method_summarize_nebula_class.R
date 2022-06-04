@@ -1,6 +1,6 @@
 #' @title FUNCTION_TITLE
 #' @description FUNCTION_DESCRIPTION
-#' @param data PARAM_DESCRIPTION
+#' @param data PPCP dataset
 #' @param ppcp_threshold PARAM_DESCRIPTION, Default: 0.5
 #' @param max_classes PARAM_DESCRIPTION, Default: 5
 #' @param hierarchy_priority PARAM_DESCRIPTION, Default: c(6, 5, 4, 3)

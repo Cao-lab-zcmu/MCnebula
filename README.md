@@ -139,16 +139,40 @@ annotate_child_nebula(
   nebula_name,
   layout = "fr",
   ## a table to mark color of nodes
-  nodes_mark = mark_df,
+  nodes_mark = data.frame(
+    .id = c(1, 300, 500),
+    mark = c("biomarker1", "biomarker2", "biomarker3")
+  ),
+  plot_nodes_id = T,
+  plot_structure = T,
+  plot_ppcp = T,
   ## manually define the color of nodes
-  palette = mark_palette,
+  palette = c(
+    biomarker1 = 'pink',
+    biomarker2 = 'lightblue',
+    biomarker3 = 'white',
+    Others = '#B8B8B8'
+  ),
   ## feature quantification table
-  ratio_df = mean.feature_stat,
-  palette_stat = stat_palette,
+  ratio_df = data.frame(
+    .id = 1:1000,
+    sample1 = rnorm(1000, 1E5, 1E4),
+    sample2 = rnorm(1000, 1E6, 5E4),
+    sample3 = rnorm(1000, 1E4, 5E3),
+  ),
+  ## A vector of the hex color with names or not
+  palette_stat = c(
+    sample1 = 'blue',
+    sample2 = 'yellow',
+    sample3 = 'red'
+  ),
+  ## control nodes size in child-nebula, zoom in or zoom out globally.
   global.node.size = 0.8,
   ## the args of `ggplot::theme`
-  theme_args = list(panel.background = element_rect(),
+  theme_args = list(
+    panel.background = element_rect(),
     panel.grid = element_line()
-  )
+  ),
+  return_plot = F
 )
 ```
