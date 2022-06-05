@@ -59,9 +59,9 @@ However, the chemical structure mapping in child-nebula is depending on 'Chemmin
 Installing graphic tools:
 
 ```
-install.packages("igraph", "ggraph", "svglite",
+install.packages(c("igraph", "ggraph", "svglite",
                  "tidygraph", "rsvg", "grImport2",
-                 "ggimage", "ggtext", "ggsci")
+                 "ggimage", "ggtext", "ggsci"))
 ```
 
 For installing packages in github:
