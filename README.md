@@ -27,7 +27,7 @@ sudo apt install --no-install-recommends r-base
 In bash:
 ```
 ## Libraries for installing 'usethis' and 'devtools'.
-sudo apt install libssl-dev libcurl4-openssl-dev
+sudo apt install libssl-dev libcurl4-openssl-dev libblas-dev liblapack-dev libgfortran-11-dev
 ## Libraries for installing 'BiocManager' and its some packages.
 sudo apt install libnetcdf-dev libopenbabel-dev libeigen3-dev
 ## Libraries For installing other graphic packages.
