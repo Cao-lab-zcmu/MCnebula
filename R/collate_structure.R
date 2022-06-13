@@ -29,7 +29,7 @@ collate_structure <-
   ## ---------------------------------------------------------------------- 
   ## check dirs
   cat("## collate_structure: check_dir\n")
-  if(dirs == "all"){
+  if(length(dirs) == 1 & dirs == "all"){
     dirs <- list.files(path = .MCn.sirius, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
     check <- pbapply::pbsapply(dirs, check_dir) %>%
       unname()
