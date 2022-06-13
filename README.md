@@ -185,8 +185,14 @@ visualize_child_nebulae(
     .id = c("1", "300", "500"),
     mark = c("biomarker1", "biomarker2", "biomarker3")
   ),
+  palette = c(
+    biomarker1 = 'pink',
+    biomarker2 = 'lightblue',
+    biomarker3 = 'white',
+    Others = '#B8B8B8'
+  ),
   nodes_size_range = c(2, 4)
-)
+  )
 ```
 
 Last, users are encouraged for in-depth visualization of child-nebula:
