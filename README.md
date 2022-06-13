@@ -182,7 +182,7 @@ visualize_child_nebulae(
   ## herein, you can mark some features with specific color.
   ## if not, just ignore the augment.
   nodes_mark = data.frame(
-    .id = c(1, 300, 500),
+    .id = c("1", "300", "500"),
     mark = c("biomarker1", "biomarker2", "biomarker3")
   ),
   nodes_size_range = c(2, 4)
@@ -198,7 +198,7 @@ annotate_child_nebula(
   layout = "fr",
   ## a table to mark color of nodes
   nodes_mark = data.frame(
-    .id = c(1, 300, 500),
+    .id = c("1", "300", "500"),
     mark = c("biomarker1", "biomarker2", "biomarker3")
   ),
   plot_nodes_id = T,
