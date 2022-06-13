@@ -191,8 +191,14 @@ visualize_child_nebulae(
     biomarker3 = 'white',
     Others = '#B8B8B8'
   ),
-  nodes_size_range = c(2, 4)
-  )
+  nodes_size_range = c(2, 4),
+  ## adjust the legend
+  remove_legend_lab = T,
+  legend_fill = T,
+  legend_position = "bottom",
+  nodes_stroke = 0,
+  edges_color = "#D9D9D9"
+)
 ```
 
 Last, users are encouraged for in-depth visualization of child-nebula:
