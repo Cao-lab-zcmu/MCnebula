@@ -43,14 +43,21 @@ method_summarize_nebula_index <-
            filter_via_struc_score = "tanimotoSimilarity", 
            struc_score_cutoff = 0.3,
            min_reached_pct = 0.6,
+           target_classes = NA,
            ...
            ){
     classes <- data.table::rbindlist(nebula_class)
-    if(rm_position_describe_class == T){
+    if(rm_position_describe_class){
       classes <- dplyr::filter(classes, !grepl("[0-9]", name))
     }
     ## classes is merely a classes index number set
     classes <- dplyr::distinct(classes, relativeIndex)$relativeIndex
+    ## user defined classes
+    if(!is.na(target_classes)){
+      target_classes <- dplyr::filter(.MCn.class_tree_data, name %in% target_classes)
+      ## merge
+      classes <- c(classes, target_classes$relativeIndex)
+    }
     ## get classes
     cat("## Method part: class_retrieve\n")
     index_list <- pbapply::pblapply(ppcp_dataset, class_retrieve,

@@ -35,7 +35,7 @@ collate_ppcp <-
     ## check dirs ---- canopus
     cat("## collate_ppcp: check_dir\n")
     if(length(dirs) == 1 & dirs[1] == "all"){
-      dirs <- list.files(path = .MCn.sirius, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
+      dirs <- list.files(path = .MCn.sirius, pattern = "^[0-9](.*)_(.*)_(.*)$", full.names = F)
       check <- pbapply::pbsapply(dirs, check_dir, file = "canopus") %>% unname
     }else{
       check <- pbapply::pbsapply(dirs, check_dir, file = "canopus") %>% unname
