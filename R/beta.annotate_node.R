@@ -66,6 +66,7 @@ annotate_node <-
       filepath <- paste0(tmp_ppcp, "/", node_id, ".svg")
       ## mv file
       file.copy(filepath, output)
+      file.copy(paste0(tmp_ppcp, "/legend_", node_id, ".svg"), output)
       ## ------------------------------------- 
     }
   }

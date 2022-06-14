@@ -40,6 +40,12 @@ batch_mode_nodes <-
     ## ---------------------------------------------------------------------- 
     ## ratio_df, extra peak area data
     if(plot_ratio){
+      ## adjust palette_stat
+      if(!is.null(names(palette_stat)[1])){
+        palette_stat <- palette_stat[names(palette_stat) %in% names(ratio_df)]
+      }else{
+        palette_stat[1:(ncol(ratio_df)-1)]
+      }
       ratio_df <- dplyr::mutate(ratio_df, .id = as.character(.id))
       ratio_df <- merge(dplyr::select(meta_nodes, .id), ratio_df, all.x = T, by = ".id", sort = F)
       ## get list data
@@ -129,9 +135,9 @@ base_vis_nodes <-
       ## add pie plot into ggplot2 project
       names(palette_ppcp) <- class_index
       p <- p + geom_tile(data = ratio_df, size = 0.2, color = "white",
-                                  aes(y = -2.5, x = midd, width = width, height = 2.5, fill = group)) +
+                         aes(y = -2.5, x = midd, width = width, height = 2.5, fill = group)) +
         ## add 'fill' palette
-        scale_fill_manual(values = c(palette_ppcp, palette_stat[1:nrow(ratio_df)]))
+        scale_fill_manual(values = c(palette_ppcp, palette_stat))
     }else{
       ## add 'fill' palette
       names(palette_ppcp) <- class_index
