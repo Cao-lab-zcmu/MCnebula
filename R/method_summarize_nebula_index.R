@@ -27,7 +27,7 @@
 #' @importFrom pbapply pblapply
 method_summarize_nebula_index <-
   function(
-           ppcp_dataset,
+           ppcp_dataset = .MCn.ppcp_dataset,
            nebula_class = .MCn.nebula_class,
            ppcp_threshold = 0.5,
            # min number of compounds allowed exist in a child-nebula. if less than, filter the nebula
@@ -46,14 +46,18 @@ method_summarize_nebula_index <-
            target_classes = NA,
            ...
            ){
-    classes <- data.table::rbindlist(nebula_class)
-    if(rm_position_describe_class){
-      classes <- dplyr::filter(classes, !grepl("[0-9]", name))
+    if(is.list(nebula_class)){
+      classes <- data.table::rbindlist(nebula_class)
+      if(rm_position_describe_class){
+        classes <- dplyr::filter(classes, !grepl("[0-9]", name))
+      }
+      ## classes is merely a classes index number set
+      classes <- dplyr::distinct(classes, relativeIndex)$relativeIndex
+    }else{
+      classes <- c()
     }
-    ## classes is merely a classes index number set
-    classes <- dplyr::distinct(classes, relativeIndex)$relativeIndex
     ## user defined classes
-    if(!is.na(target_classes)){
+    if(is.vector(target_classes)){
       target_classes <- dplyr::filter(.MCn.class_tree_data, name %in% target_classes)
       ## merge
       classes <- c(classes, target_classes$relativeIndex)
