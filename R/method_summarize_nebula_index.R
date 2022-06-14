@@ -176,3 +176,17 @@ fun_filter_via_struc_score <-
       return()
     }
   }
+## ---------------------------------------------------------------------- 
+method_summarize_target_index <- 
+  function(
+           target_classes
+           ){
+    target_index <- method_summarize_nebula_index(nebula_class = NA,
+                                                  target_classes = target_classes,
+                                                  identical_factor = NA,
+                                                  filter_via_struc_score = NA,
+                                                  max_possess_pct = 1,
+                                                  min_possess = 1
+    )
+    return(target_index)
+  }
