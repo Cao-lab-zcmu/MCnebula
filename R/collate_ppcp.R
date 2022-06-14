@@ -34,7 +34,7 @@ collate_ppcp <-
     ## ---------------------------------------------------------------------- 
     ## check dirs ---- canopus
     cat("## collate_ppcp: check_dir\n")
-    if(dirs == "all"){
+    if(length(dirs) == 1 & dirs[1] == "all"){
       dirs <- list.files(path = .MCn.sirius, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
       check <- pbapply::pbsapply(dirs, check_dir, file = "canopus") %>% unname
     }else{
@@ -65,7 +65,7 @@ collate_ppcp <-
     .MCn.ppcp_dataset <<- ppcp_dataset
     ## ---------------------------------------------------------------------- 
     ## summarize nebula_class
-    if(nebula_class == T){
+    if(nebula_class){
       cat("## collate_ppcp: method_summarize_nebula_class\n")
       metadata <- data.table::rbindlist(.MCn.class_tree_list, idcol = T) %>%
         dplyr::rename(hierarchy = .id)
@@ -82,14 +82,14 @@ collate_ppcp <-
       .MCn.nebula_class <<- nebula_class
     }
     ## ---------------------------------------------------------------------- 
-    if(nebula_index == T){
+    if(nebula_index){
       cat("## collate_ppcp: method_summarize_nebula_index.\n")
       ## gather all nebula classes
       nebula_index <- method_summarize_nebula_index(ppcp_dataset,
                                                     ...)
       .MCn.nebula_index <<- nebula_index
     ## ---------------------------------------------------------------------- 
-      if(write_output == T){
+      if(write_output){
         output = paste0(.MCn.output, "/", .MCn.results)
         write_tsv(nebula_index, file = paste0(output, "/", "nebula_index.tsv"))
       }
