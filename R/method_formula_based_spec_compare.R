@@ -46,11 +46,15 @@ method_formula_based_spec_compare <-
            min_zodiac = 0.9, 
            # only the top structure tanimotoSimilarity >= 0.4 ...
            min_tanimoto = 0.4, 
+           ## ------------------------------------- 
+           formula_set = .MCn.formula_set,
+           structure_set = .MCn.structure_set,
+           target_ids = NULL,
            ...
            ){
     ## ------------------------------------------------------------------------------------------
     ## check dirs ---- spectra
-    if(dirs == "all"){
+    if(length(dirs) == 1 & dirs[1] == "all"){
       dirs <- list.files(path = path, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
       cat("## Method part: check_dir\n")
       check <- pbapply::pbsapply(dirs, check_dir, file = "spectra") %>% unname
@@ -63,8 +67,11 @@ method_formula_based_spec_compare <-
       data.frame() %>%
       dplyr::rename(dir = ".") %>%
       dplyr::mutate(.id = sapply(dir, grep_id)) %>%
-      merge(.MCn.formula_set, by = ".id", all.x = T) %>%
-      merge(.MCn.structure_set[, c(".id", "tanimotoSimilarity")], by = ".id", all.x = T)
+      merge(formula_set, by = ".id", all.x = T) %>%
+      merge(structure_set[, c(".id", "tanimotoSimilarity")], by = ".id", all.x = T)
+    if(is.vector(target_ids)){
+      meta_dir <- dplyr::filter(meta_dir, .id %in% target_ids)
+    }
     ## some .id were Avoid time-consuming calculation
     if(nrow(meta_dir) >= filter_only_max){
       meta_dir <- dplyr::filter(meta_dir, ZodiacScore >= min_zodiac, tanimotoSimilarity >= min_tanimoto)
