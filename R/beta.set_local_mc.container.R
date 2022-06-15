@@ -1,8 +1,35 @@
 ## set some empty var to local to storage var
-set_local_mc.container <- 
+call_fun_mc.space <- 
   function(
-           FUN
+           FUN,
+           args,
+           clear_start = T,
+           clear_end = T
            ){
+    local <- environment()
+    if(clear_start){
+      rm_mc.set(envir = parent.env(local))
+    }
+    ## ---------------------------------------------------------------------- 
+    overall_set <- get_mc.global_meta()
+    set <- overall_set[names(overall_set) == FUN]
+    set <- unlist(set, use.names = F) 
+    ## ---------------------------------------------------------------------- 
+    lapply(set, function(var){
+             assign(var, 0, envir = parent.env(local))
+    })
+    ## ----------------------------------------------------------------------
+    res <- do.call(match.fun(FUN), args)
+    ## ------------------------------------- 
+    res <- list(envir = parent.env(local), results = res)
+    ## ------------------------------------- 
+    if(clear_end){
+      rm_mc.set(envir = parent.env(local))
+    }
+    return(res)
+  }
+get_mc.global_meta <- 
+  function(){
     overall_set <- list(build_classes_tree_list = c(".MCn.class_tree_list"),
                         collate_ppcp = c(".MCn.ppcp_dataset",
                                          ".MCn.class_tree_data",
@@ -20,23 +47,6 @@ set_local_mc.container <-
                                                 ".MCn.palette",
                                                 ".MCn.palette_stat",
                                                 ".MCn.palette_ppcp",
-                                                ".MCn.palette_label")
-    )
-    if("all" %in% FUN){
-      set <- overall_set
-    }else{
-      set <- overall_set[names(overall_set) %in% FUN]
-    }
-    set <- unlist(set, use.names = F) 
-    ## set var in parent frame
-    local <- environment()
-    test <- try(get(".MCn.sirius", envir = parent.env(local)))
-    print(test)
-    ## ---------------------------------------------------------------------- 
-    lapply(set, function(var){
-             assign(var, 0, envir = parent.env(local))
-    })
-    print(.MCn.sirius)
-    initialize_mcnebula("test_mcnebula/gnps_pos/")
-    return(parent.env(local))
+                                                ".MCn.palette_label"))
+    return(overall_set)
   }

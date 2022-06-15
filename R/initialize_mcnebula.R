@@ -34,11 +34,10 @@ initialize_mcnebula <-
            palette_stat = palette,
            palette_ppcp = palette,
            palette_label = colorRampPalette(c("#C6DBEFFF", "#3182BDFF", "red"))(10),
-           rm_var = F
+           rm_mc.set = F
            ){
-    if(rm_var == T){
-      ls(envir = .GlobalEnv, pattern = "^.MCn.(.*)", all.names = T) %>%
-        rm(envir = .GlobalEnv)
+    if(rm_mc.set){
+      rm_mc.set(envir = .GlobalEnv)
     }
     if(file.exists(sirius_path)==F | file.exists(output_path)==F){
       cat("File path not find.\n")
@@ -57,4 +56,13 @@ initialize_mcnebula <-
     .MCn.palette_label <<- palette_label
     dir.create(paste0(.MCn.output, "/", .MCn.results))
     cat("MCnebula project has initialized at ->", .MCn.output, "\n")
+  }
+## ---------------------------------------------------------------------- 
+rm_mc.set <- 
+  function(
+           envir,
+           pattern = "^\\.MCn\\..*"
+           ){
+    mc.set <- ls(pattern = pattern, envir = envir, all.names = T)
+    rm(list = mc.set, envir = envir)
   }
