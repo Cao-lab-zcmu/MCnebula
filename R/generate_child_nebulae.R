@@ -49,6 +49,7 @@ generate_child_nebulae <-
                       max_edges = max_edges,
                       output_format = output_format,
                       ...)
+    rm("envir_nebula", envir = parent.env(environment()))
     cat("[INFO] MCnebula Job Done: generate_child_nebulae\n")
   }
 separate_nebula <-
@@ -104,6 +105,7 @@ better_vis_nebula <-
     sapply(1:n, edges_cut_off, max_edges = max_edges)
     ## ---------------------------------------------------------------------- 
     edges <- edges[df$SEQ, ]
+    rm("envir_meta", envir = parent.env(environment()))
     return(edges)
   }
 edges_cut_off <-

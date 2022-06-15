@@ -29,12 +29,14 @@ set_local_mc.container <-
     }
     set <- unlist(set, use.names = F) 
     ## set var in parent frame
+    local <- environment()
+    test <- try(get(".MCn.sirius", envir = parent.env(local)))
+    print(test)
+    ## ---------------------------------------------------------------------- 
     lapply(set, function(var){
-             assign(var, 0, envir = parent.frame(3))
-             print(var)
-             print(parent.frame(3))
+             assign(var, 0, envir = parent.env(local))
     })
-    print(ls())
-    print("---")
-    print(parent.env(environment()))
+    print(.MCn.sirius)
+    initialize_mcnebula("test_mcnebula/gnps_pos/")
+    return(parent.env(local))
   }

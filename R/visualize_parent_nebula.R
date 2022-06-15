@@ -82,6 +82,9 @@ visualize_parent_nebula <-
       ggsave(p, file = paste0(output, "/", "parent_nebula", "/", "parent_nebula.svg"),
              width = width, height = height)
     }
+    ## ---------------------------------------------------------------------- 
+    rm("envir_meta", envir = parent.env(environment()))
+    ## ---------------------------------------------------------------------- 
     cat("[INFO] MCnebula Job Done: visualize_parent_nebula\n")
     if(return_plot == T){
       return(p)

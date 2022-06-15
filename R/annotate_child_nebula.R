@@ -174,6 +174,9 @@ annotate_child_nebulae <-
       ggsave(p, file = paste0(output, "/", nebula_name, "_graph.svg"),
              width = width, height = height)
     }
+    ## ---------------------------------------------------------------------- 
+    rm("envir_meta", envir = parent.env(environment()))
+    ## ---------------------------------------------------------------------- 
     cat("[INFO] MCnebula Job Done: annotate_child_nebulae\n")
     if(return_plot){
       return(p)

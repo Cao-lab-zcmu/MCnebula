@@ -94,6 +94,9 @@ collate_ppcp <-
         write_tsv(nebula_index, file = paste0(output, "/", "nebula_index.tsv"))
       }
     }
+    ## ---------------------------------------------------------------------- 
+    rm("envir_meta", envir = parent.env(environment()))
+    ## ---------------------------------------------------------------------- 
     cat("[INFO] MCnebula Job Done: collate_ppcp.\n")
     return(nebula_index)
   }
