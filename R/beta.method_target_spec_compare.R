@@ -15,5 +15,5 @@ method_target_spec_compare <-
       ...
     )
     write_tsv(edges, output)
-    return(edges)
+    return(output)
   }
