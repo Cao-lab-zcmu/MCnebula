@@ -275,3 +275,23 @@ inchikey_set <- extract_rdata_list(
   paste0(dir, "/", "inchikey.rdata")
 )
 ```
+
+**Use PubChem CID to get synonyms of compounds**.
+Note that `pubchem_curl_inchikey` not only get InChIKey, but also PubChem CID.
+Herein, `pubchem_get_synonyms` is used to get synonyms via PubChem CID.
+
+```
+pubchem_get_synonyms(
+  ## a vector of PubChem CID
+  cid,
+  ## output path
+  dir,
+  ## number of threads
+  curl_cl = NULL,
+  gather_as_rdata = T
+)
+syno_set <- extract_rdata_list(
+  paste0(dir, "/", "cid.rdata")
+)
+```
+
