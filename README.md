@@ -253,4 +253,45 @@ annotate_child_nebula(
 
 ### Standalone tools
 
-...
+**Use InChiKey planar to get all possible InChIKey.**
+`pubchem_curl_inchikey` function use `RCurl` package and through PubChem API to get InChIKey.
+We design this function with the stability of the network in consideration.
+Therefore, the process of getting data will not fail due to `Status: 503`.
+
+```
+pubchem_curl_inchikey(
+  ## a vector of InChIKey planar
+  inchikey2d,
+  ## output path
+  dir,
+  ## number of threads
+  curl_cl = NULL,
+  ## each InChiKey planar will get a .TSV file. Here, this setting could gather them
+  ## as 'list' into .rdata. Indeed, this can save storage space.
+  gather_as_rdata = T
+)
+## if 'gather_as_rdata' == T, user can use following function to get results.
+inchikey_set <- extract_rdata_list(
+  paste0(dir, "/", "inchikey.rdata")
+)
+```
+
+**Use PubChem CID to get synonyms of compounds**.
+Note that `pubchem_curl_inchikey` not only get InChIKey, but also PubChem CID.
+Herein, `pubchem_get_synonyms` is used to get synonyms via PubChem CID.
+
+```
+pubchem_get_synonyms(
+  ## a vector of PubChem CID
+  cid,
+  ## output path
+  dir,
+  ## number of threads
+  curl_cl = NULL,
+  gather_as_rdata = T
+)
+syno_set <- extract_rdata_list(
+  paste0(dir, "/", "cid.rdata")
+)
+```
+
