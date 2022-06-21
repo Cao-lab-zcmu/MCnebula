@@ -13,9 +13,8 @@ vis_via_molconvert <-
            id_set,
            output = paste0(.MCn.output, "/", .MCn.results, "/tmp/structure")
            ){
-    if(file.exists(output) == F){
-      dir.create(paste0(.MCn.output, "/", .MCn.results))
-      dir.create(output)
+    if(!file.exists(output)){
+      dir.create(output, recursive = T)
     }
     pbapply::pbmapply(molconvert_structure,
            smiles_set,
