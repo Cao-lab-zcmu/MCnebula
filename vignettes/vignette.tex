@@ -1,0 +1,786 @@
+\documentclass[]{tufte-handout}
+
+% ams
+\usepackage{amssymb,amsmath}
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \makeatletter
+  \@ifpackageloaded{fontspec}{}{\usepackage{fontspec}}
+  \makeatother
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+  \makeatletter
+  \@ifpackageloaded{soul}{
+     \renewcommand\allcapsspacing[1]{{\addfontfeature{LetterSpace=15}#1}}
+     \renewcommand\smallcapsspacing[1]{{\addfontfeature{LetterSpace=10}#1}}
+   }{}
+  \makeatother
+
+\fi
+
+% graphix
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% booktabs
+\usepackage{booktabs}
+
+% url
+\usepackage{url}
+
+% hyperref
+\usepackage{hyperref}
+
+% units.
+\usepackage{units}
+
+
+\setcounter{secnumdepth}{-1}
+
+% citations
+
+
+% pandoc syntax highlighting
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+
+% table with pandoc
+
+% multiplecol
+\usepackage{multicol}
+
+% strikeout
+\usepackage[normalem]{ulem}
+
+% morefloats
+\usepackage{morefloats}
+
+
+% tightlist macro required by pandoc >= 1.14
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% title / author / date
+\title{MCnebula workflow for LC-MS/MS dataset analysis}
+\author{Lichuang Huang}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+
+
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+This vignette descrip a classified visualization method, called
+MCnebula, for the analysis of untargeted LC-MS/MS datasets. MCnebula
+utilizes the state-of-the-art computer prediction technology, SIRIUS
+workflow (SIRIUS, ZODIAC, CSI:fingerID, CANOPUS), for compound formula
+prediction, structure retrieve and classification prediction. MCnebula
+integrates an abundance-based class selection algorithm into compound
+annotation. The benefits of molecular networking, i.e.~intuitive
+visualization and a large amount of integratable information, were
+incorporated into MCnebula visualization. With MCnebula, we can switch
+from untargeted to targeted analysis, focusing precisely on the compound
+or chemical class of interest to the researcher.
+
+\hypertarget{r-and-other-softs-setup}{%
+\subsection{R and other softs Setup}\label{r-and-other-softs-setup}}
+
+\hypertarget{r-setup}{%
+\subsubsection{R setup}\label{r-setup}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(MCnebula)}
+\KeywordTok{library}\NormalTok{(dplyr)}
+\KeywordTok{library}\NormalTok{(ggplot2)}
+\KeywordTok{library}\NormalTok{(ggraph)}
+\KeywordTok{library}\NormalTok{(grid)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{others-setup}{%
+\subsubsection{Others setup}\label{others-setup}}
+
+The prerequisite soft for MCnebula is SIRIUS 4. Users can download that
+from \url{https://bio.informatik.uni-jena.de/software/sirius/}.
+
+   In addition, users are encouraged to perform MZmine 2
+(\url{https://github.com/mzmine/mzmine2}) for LC-MS/MS data processing.
+
+   Before mass spectrometry data been processed, the raw data should be
+converted to .mzML or .mzXML file in most cases. ProteoWizard
+(\url{https://proteowizard.sourceforge.io/}) could be implemented for
+conversion.
+
+\hypertarget{data-preprocessing}{%
+\subsection{Data preprocessing}\label{data-preprocessing}}
+
+\hypertarget{raw-data-processing}{%
+\subsubsection{Raw data processing}\label{raw-data-processing}}
+
+For MZmine2 processing, an XML batch file outlined the example
+parameters for waters Qtof could be find in
+\url{https://github.com/Cao-lab-zcmu/research-supplementary}.
+
+\hypertarget{sirius-computation-workflow}{%
+\subsubsection{SIRIUS computation
+workflow}\label{sirius-computation-workflow}}
+
+Here we prepared some example files for this vignette to better
+illustrate MCnebula workflow.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{eg.path \textless{}{-}}\StringTok{ }\KeywordTok{system.file}\NormalTok{(}\StringTok{"extdata"}\NormalTok{, }\StringTok{"raw\_instance.tar.gz"}\NormalTok{, }\DataTypeTok{package =} \StringTok{"MCnebula"}\NormalTok{)}
+\NormalTok{tmp \textless{}{-}}\StringTok{ }\KeywordTok{tempdir}\NormalTok{()}
+\NormalTok{utils}\OperatorTok{::}\KeywordTok{untar}\NormalTok{(eg.path, }\DataTypeTok{exdir =}\NormalTok{ tmp)}
+\NormalTok{mgf.path \textless{}{-}}\StringTok{ }\KeywordTok{paste0}\NormalTok{(tmp, }\StringTok{"/"}\NormalTok{, }\StringTok{"instance5.mgf"}\NormalTok{)}
+\CommentTok{\#\#\# show details of .mgf}
+\NormalTok{data.table}\OperatorTok{::}\KeywordTok{fread}\NormalTok{(mgf.path, }\DataTypeTok{header =}\NormalTok{ F, }\DataTypeTok{sep =} \OtherTok{NULL}\NormalTok{)}
+\CommentTok{\#\textgreater{}                           V1}
+\CommentTok{\#\textgreater{}   1:              }\RegionMarkerTok{BEGIN}\CommentTok{ IONS}
+\CommentTok{\#\textgreater{}   2:     FEATURE\_ID=gnps1234}
+\CommentTok{\#\textgreater{}   3: PEPMASS=468.29557911617}
+\CommentTok{\#\textgreater{}   4:               CHARGE=+1}
+\CommentTok{\#\textgreater{}   5:               MSLEVEL=1}
+\CommentTok{\#\textgreater{}  {-}{-}{-}                        }
+\CommentTok{\#\textgreater{} 532:            381.78391 30}
+\CommentTok{\#\textgreater{} 533:           382.14539 260}
+\CommentTok{\#\textgreater{} 534:            383.14563 10}
+\CommentTok{\#\textgreater{} 535:                }\RegionMarkerTok{END}\CommentTok{ IONS}
+\CommentTok{\#\textgreater{} 536:}
+\end{Highlighting}
+\end{Shaded}
+
+If SIRIUS soft has been download locally and the Environment Path has
+been set down (for example, set
+\texttt{PATH=\$PATH:/you/your\_dir/sirius-gui/bin} in
+\texttt{\textasciitilde{}/.bashrc}), the following is availlable:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{system}\NormalTok{(}
+  \KeywordTok{paste0}\NormalTok{(}
+    \StringTok{"sirius {-}i "}\NormalTok{,}
+\NormalTok{    mgf.path,}
+    \StringTok{" {-}o test {-}{-}maxmz 800 formula {-}c 50 zodiac structure canopus"}
+\NormalTok{    )}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+A more simpler approach is to use SIRIUS GUI version.
+
+\hypertarget{mcnebula-processing}{%
+\subsubsection{MCnebula processing}\label{mcnebula-processing}}
+
+In deed, the computation of SIRIUS is time-consumed. It may cost several
+hours even days. Here, we prepared a fairly small dataset (SIRIUS
+project space) which has been done from SIRIUS computation. The
+following show the detail of this dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{list.files}\NormalTok{(tmp) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\NormalTok{.[}\KeywordTok{which}\NormalTok{(. }\OperatorTok{!=}\StringTok{ "instance5.mgf"}\NormalTok{)]}
+\CommentTok{\#\textgreater{}  [1] "0\_instance5\_gnps1234"                                       }
+\CommentTok{\#\textgreater{}  [2] "1\_instance5\_gnps1537"                                       }
+\CommentTok{\#\textgreater{}  [3] "2\_instance5\_gnps1539"                                       }
+\CommentTok{\#\textgreater{}  [4] "3\_instance5\_gnps1567"                                       }
+\CommentTok{\#\textgreater{}  [5] "4\_instance5\_gnps1588"                                       }
+\CommentTok{\#\textgreater{}  [6] "canopus\_summary\_adducts.tsv"                                }
+\CommentTok{\#\textgreater{}  [7] "canopus\_summary.tsv"                                        }
+\CommentTok{\#\textgreater{}  [8] "canopus.tsv"                                                }
+\CommentTok{\#\textgreater{}  [9] "compound\_identifications\_adducts.tsv"                       }
+\CommentTok{\#\textgreater{} [10] "compound\_identifications.tsv"                               }
+\CommentTok{\#\textgreater{} [11] "downloaded\_packages"                                        }
+\CommentTok{\#\textgreater{} [12] "formula\_identifications\_adducts.tsv"                        }
+\CommentTok{\#\textgreater{} [13] "formula\_identifications.tsv"                                }
+\CommentTok{\#\textgreater{} [14] "libloc\_169\_8f48fc7d1db1bb3e.rds"                            }
+\CommentTok{\#\textgreater{} [15] "libloc\_195\_e5e4a02699cec889.rds"                            }
+\CommentTok{\#\textgreater{} [16] "report.mztab"                                               }
+\CommentTok{\#\textgreater{} [17] "repos\_https\%3A\%2F\%2Fcloud.r{-}project.org\%2Fsrc\%2Fcontrib.rds"}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-collating}{%
+\paragraph{Data collating}\label{data-collating}}
+
+To begin with, MCnebula should he initialized in SIRIUS project.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{initialize\_mcnebula}\NormalTok{(tmp, }\DataTypeTok{rm\_mc.set =}\NormalTok{ T)}
+\CommentTok{\#\textgreater{} MCnebula project has initialized at {-}\textgreater{} /tmp/Rtmp12SxNi}
+\end{Highlighting}
+\end{Shaded}
+
+This will set some global var.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ls}\NormalTok{(}\DataTypeTok{pattern =} \StringTok{"\^{}}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{.MCn}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{."}\NormalTok{, }\DataTypeTok{all.names =}\NormalTok{ T)}
+\CommentTok{\#\textgreater{} [1] ".MCn.output"        ".MCn.palette"       ".MCn.palette\_label"}
+\CommentTok{\#\textgreater{} [4] ".MCn.palette\_ppcp"  ".MCn.palette\_stat"  ".MCn.results"      }
+\CommentTok{\#\textgreater{} [7] ".MCn.sirius"}
+\end{Highlighting}
+\end{Shaded}
+
+Users can manually modify the setup.
+
+\hypertarget{collate-structure}{%
+\subparagraph{Collate structure}\label{collate-structure}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{collate\_structure}\NormalTok{(}
+  \DataTypeTok{exclude\_element =} \KeywordTok{c}\NormalTok{(}\StringTok{"Cl"}\NormalTok{, }\StringTok{"S"}\NormalTok{, }\StringTok{"P"}\NormalTok{),}
+  \DataTypeTok{ppm\_error =} \DecValTok{20}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} [INFO] MCnebula run: collate\_structure}
+\CommentTok{\#\textgreater{} \#\# collate\_structure: check\_dir}
+\CommentTok{\#\textgreater{} \#\# collate\_structure: method\_pick\_formula\_excellent}
+\CommentTok{\#\textgreater{} \#\# Method part: batch\_get\_formula}
+\CommentTok{\#\textgreater{} \#\# Method part: batch\_get\_structure}
+\CommentTok{\#\textgreater{} \#\# collate\_structure: re{-}collate structure}
+\CommentTok{\#\textgreater{} [INFO] MCnebula Job Done: collate\_structure.}
+\end{Highlighting}
+\end{Shaded}
+
+The results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.MCn.formula\_set}
+\CommentTok{\#\textgreater{} \# A tibble: 5 x 8}
+\CommentTok{\#\textgreater{}   .id       rank precursorFormula molecularFormula adduct   ZodiacScore}
+\CommentTok{\#\textgreater{}   \textless{}chr\textgreater{}    \textless{}dbl\textgreater{} \textless{}chr\textgreater{}            \textless{}chr\textgreater{}            \textless{}chr\textgreater{}          \textless{}dbl\textgreater{}}
+\CommentTok{\#\textgreater{} 1 gnps1234     1 C25H41NO7        C25H41NO7        [M + H]+       0.551}
+\CommentTok{\#\textgreater{} 2 gnps1537     1 C33H47N5O6       C33H47N5O6       [M + H]+       0    }
+\CommentTok{\#\textgreater{} 3 gnps1539     1 C33H47N5O6       C33H47N5O6       [M + H]+       0    }
+\CommentTok{\#\textgreater{} 4 gnps1567     1 C32H32N4O4       C32H32N4O4       [M + H]+       0    }
+\CommentTok{\#\textgreater{} 5 gnps1588     1 C24H17N3O2       C24H17N3O2       [M + H]+       0    }
+\CommentTok{\#\textgreater{} \# ... with 2 more variables: \textasciigrave{}massErrorPrecursor(ppm)\textasciigrave{} \textless{}dbl\textgreater{}, use\_zodiac \textless{}lgl\textgreater{}}
+\NormalTok{.MCn.structure\_set}
+\CommentTok{\#\textgreater{} \# A tibble: 5 x 15}
+\CommentTok{\#\textgreater{}   .id      file\_name  inchikey2D inchi molecularFormula  rank score name  smiles}
+\CommentTok{\#\textgreater{}   \textless{}chr\textgreater{}    \textless{}chr\textgreater{}      \textless{}chr\textgreater{}      \textless{}chr\textgreater{} \textless{}chr\textgreater{}            \textless{}int\textgreater{} \textless{}dbl\textgreater{} \textless{}chr\textgreater{} \textless{}chr\textgreater{} }
+\CommentTok{\#\textgreater{} 1 gnps1234 C25H41NO7\textasciitilde{} YPJNTJHXP\textasciitilde{} InCh\textasciitilde{} C25H41NO7            1 {-}37.3 null  CCN1C\textasciitilde{}}
+\CommentTok{\#\textgreater{} 2 gnps1537 C33H47N5O\textasciitilde{} HZWIJOWMG\textasciitilde{} InCh\textasciitilde{} C33H47N5O6           1 {-}22.2 (6S,\textasciitilde{} CCC(C\textasciitilde{}}
+\CommentTok{\#\textgreater{} 3 gnps1539 C33H47N5O\textasciitilde{} GWLHFNKLJ\textasciitilde{} InCh\textasciitilde{} C33H47N5O6           1 {-}19.9 null  CCC(=\textasciitilde{}}
+\CommentTok{\#\textgreater{} 4 gnps1567 C32H32N4O\textasciitilde{} BUTLVTAFD\textasciitilde{} InCh\textasciitilde{} C32H32N4O4           1 {-}21.2 null  CC1(C\textasciitilde{}}
+\CommentTok{\#\textgreater{} 5 gnps1588 C24H17N3O\textasciitilde{} HXDZMNFJQ\textasciitilde{} InCh\textasciitilde{} C24H17N3O2           1 {-}18.1 Benz\textasciitilde{} CN1C(\textasciitilde{}}
+\CommentTok{\#\textgreater{} \# ... with 6 more variables: xlogp \textless{}dbl\textgreater{}, PubMedIds \textless{}chr\textgreater{}, links \textless{}chr\textgreater{},}
+\CommentTok{\#\textgreater{} \#   tanimotoSimilarity \textless{}dbl\textgreater{}, dbflags \textless{}int64\textgreater{}, structure\_rank \textless{}int\textgreater{}}
+\end{Highlighting}
+\end{Shaded}
+
+Next, we collate the metadata of chemical classes hierarchy.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{build\_classes\_tree\_list}\NormalTok{()}
+\CommentTok{\#\textgreater{} INFO: Classification Index in.MCn.sirius project {-}{-}{-}\textgreater{} canopus.tsv }
+\CommentTok{\#\textgreater{} A total of 11 levels.}
+\CommentTok{\#\textgreater{} These classes (upon ClassyFire and CANOPUS) were separated into sub{-}lists.}
+\CommentTok{\#\textgreater{}         Use following arguments to get some specific classes:}
+\CommentTok{\#\textgreater{}         .MCn.class\_tree\_list[[3]] \textgreater{}\textgreater{}\textgreater{} superclass}
+\CommentTok{\#\textgreater{}         .MCn.class\_tree\_list[[4]] \textgreater{}\textgreater{}\textgreater{} class}
+\CommentTok{\#\textgreater{}         .MCn.class\_tree\_list[[5]] \textgreater{}\textgreater{}\textgreater{} subclass}
+\CommentTok{\#\textgreater{}         .MCn.class\_tree\_list[[6]] \textgreater{}\textgreater{}\textgreater{} level 5}
+\end{Highlighting}
+\end{Shaded}
+
+The frame of returned project, e.g.:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.MCn.class\_tree\_list[[}\DecValTok{4}\NormalTok{]]}
+\CommentTok{\#\textgreater{} \# A tibble: 442 x 6}
+\CommentTok{\#\textgreater{}    relativeIndex absoluteIndex id              name         parentId description}
+\CommentTok{\#\textgreater{}            \textless{}int\textgreater{}         \textless{}int\textgreater{} \textless{}chr\textgreater{}           \textless{}chr\textgreater{}        \textless{}chr\textgreater{}    \textless{}chr\textgreater{}      }
+\CommentTok{\#\textgreater{}  1             3             3 CHEMONT:0000003 Thiepanes    CHEMONT\textasciitilde{} Organic co\textasciitilde{}}
+\CommentTok{\#\textgreater{}  2             5             6 CHEMONT:0000006 Benzoxazoli\textasciitilde{} CHEMONT\textasciitilde{} Organic co\textasciitilde{}}
+\CommentTok{\#\textgreater{}  3            15            18 CHEMONT:0000018 Anthracenes  CHEMONT\textasciitilde{} Organic co\textasciitilde{}}
+\CommentTok{\#\textgreater{}  4            16            19 CHEMONT:0000019 Dibenzocycl\textasciitilde{} CHEMONT\textasciitilde{} Compounds \textasciitilde{}}
+\CommentTok{\#\textgreater{}  5            17            20 CHEMONT:0000020 Fluorenes    CHEMONT\textasciitilde{} Compounds \textasciitilde{}}
+\CommentTok{\#\textgreater{}  6            18            21 CHEMONT:0000021 Indenes and\textasciitilde{} CHEMONT\textasciitilde{} Compounds \textasciitilde{}}
+\CommentTok{\#\textgreater{}  7            19            22 CHEMONT:0000022 Naphthacenes CHEMONT\textasciitilde{} Compounds \textasciitilde{}}
+\CommentTok{\#\textgreater{}  8            20            23 CHEMONT:0000023 Naphthalenes CHEMONT\textasciitilde{} Compounds \textasciitilde{}}
+\CommentTok{\#\textgreater{}  9            21            24 CHEMONT:0000024 Pentacenes   CHEMONT\textasciitilde{} Compounds \textasciitilde{}}
+\CommentTok{\#\textgreater{} 10            22            25 CHEMONT:0000025 Phenanthren\textasciitilde{} CHEMONT\textasciitilde{} Polycyclic\textasciitilde{}}
+\CommentTok{\#\textgreater{} \# ... with 432 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{collate-ppcp-data.}{%
+\subparagraph{Collate PPCP data.}\label{collate-ppcp-data.}}
+
+This function retrieve all posterior probability of classification
+prediction (PPCP) of compounds and gathered them as
+\texttt{.MCn.ppcp\_dataset}. Furthermore, in default, this function also
+summarise \texttt{.MCn.nebula\_class} and \texttt{.MCn.nebula\_index}
+upon the data of \texttt{.MCn.ppcp\_dataset}. If done,
+\texttt{.MCn.nebula\_index} would be returned.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{collate\_ppcp}\NormalTok{(}
+  \CommentTok{\#\# due to the size of example dataset, we set much smaller herein}
+  \CommentTok{\#\# min\_possess, 20 or more may be better}
+  \DataTypeTok{min\_possess =} \DecValTok{1}\NormalTok{,}
+  \CommentTok{\#\# 0.1 may better}
+  \DataTypeTok{max\_possess\_pct =} \FloatTok{0.9}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} [INFO] MCnebula run: collate\_ppcp}
+\CommentTok{\#\textgreater{} \#\# collate\_ppcp: check\_dir}
+\CommentTok{\#\textgreater{} \#\# STAT of PPCP dataset: 5(formula with PPCP)/5(all formula) }
+\CommentTok{\#\textgreater{} \#\# collate\_ppcp: method\_summarize\_nebula\_class}
+\CommentTok{\#\textgreater{} \#\# collate\_ppcp: method\_summarize\_nebula\_index.}
+\CommentTok{\#\textgreater{} \#\# Method part: class\_retrieve}
+\CommentTok{\#\textgreater{} \#\# Method part: identical\_filter}
+\CommentTok{\#\textgreater{} \#\# Method part: fun\_filter\_via\_struc\_score}
+\CommentTok{\#\textgreater{} [INFO] MCnebula Job Done: collate\_ppcp.}
+\CommentTok{\#\textgreater{} \# A tibble: 25 x 5}
+\CommentTok{\#\textgreater{} \# Groups:   relativeIndex [12]}
+\CommentTok{\#\textgreater{}    relativeIndex name                             hierarchy .id         V1}
+\CommentTok{\#\textgreater{}            \textless{}int\textgreater{} \textless{}chr\textgreater{}                                \textless{}int\textgreater{} \textless{}chr\textgreater{}    \textless{}dbl\textgreater{}}
+\CommentTok{\#\textgreater{}  1             9 Lipids and lipid{-}like molecules          3 gnps1234 0.995}
+\CommentTok{\#\textgreater{}  2           233 Phenylpropanoids and polyketides         3 gnps1537 0.998}
+\CommentTok{\#\textgreater{}  3           233 Phenylpropanoids and polyketides         3 gnps1539 0.999}
+\CommentTok{\#\textgreater{}  4           235 Organic acids and derivatives            3 gnps1537 0.999}
+\CommentTok{\#\textgreater{}  5           235 Organic acids and derivatives            3 gnps1539 1.00 }
+\CommentTok{\#\textgreater{}  6           235 Organic acids and derivatives            3 gnps1567 0.997}
+\CommentTok{\#\textgreater{}  7           235 Organic acids and derivatives            3 gnps1588 0.990}
+\CommentTok{\#\textgreater{}  8           247 Alkaloids and derivatives                3 gnps1234 0.998}
+\CommentTok{\#\textgreater{}  9          1298 Benzenoids                               3 gnps1537 0.999}
+\CommentTok{\#\textgreater{} 10          1298 Benzenoids                               3 gnps1539 0.999}
+\CommentTok{\#\textgreater{} \# ... with 15 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+In addition, \texttt{collate\_ppcp} would set following global var:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{head}\NormalTok{(.MCn.ppcp\_dataset, }\DataTypeTok{n =} \DecValTok{1}\NormalTok{)}
+\CommentTok{\#\textgreater{} $gnps1234}
+\CommentTok{\#\textgreater{}                 V1 relativeIndex}
+\CommentTok{\#\textgreater{}    1: 9.999967e{-}01             0}
+\CommentTok{\#\textgreater{}    2: 1.175820e{-}05             1}
+\CommentTok{\#\textgreater{}    3: 9.987737e{-}01             2}
+\CommentTok{\#\textgreater{}    4: 8.464927e{-}10             3}
+\CommentTok{\#\textgreater{}    5: 3.867385e{-}10             4}
+\CommentTok{\#\textgreater{}   {-}{-}{-}                           }
+\CommentTok{\#\textgreater{} 2505: 1.825751e{-}11          2504}
+\CommentTok{\#\textgreater{} 2506: 1.821264e{-}13          2505}
+\CommentTok{\#\textgreater{} 2507: 2.369786e{-}15          2506}
+\CommentTok{\#\textgreater{} 2508: 7.240430e{-}12          2507}
+\CommentTok{\#\textgreater{} 2509: 9.999823e{-}01          2508}
+\KeywordTok{head}\NormalTok{(.MCn.nebula\_class, }\DataTypeTok{n =} \DecValTok{1}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\KeywordTok{lapply}\NormalTok{(dplyr}\OperatorTok{::}\NormalTok{as\_tibble)}
+\CommentTok{\#\textgreater{} $gnps1234}
+\CommentTok{\#\textgreater{} \# A tibble: 26 x 6}
+\CommentTok{\#\textgreater{}    relativeIndex    V1 hierarchy absoluteIndex id              name             }
+\CommentTok{\#\textgreater{}            \textless{}int\textgreater{} \textless{}dbl\textgreater{}     \textless{}int\textgreater{}         \textless{}int\textgreater{} \textless{}chr\textgreater{}           \textless{}chr\textgreater{}            }
+\CommentTok{\#\textgreater{}  1          2012 1.00          6          3781 CHEMONT:0003788 Aconitane{-}type d\textasciitilde{}}
+\CommentTok{\#\textgreater{}  2          1302 1.00          6          2451 CHEMONT:0002452 Tertiary amines  }
+\CommentTok{\#\textgreater{}  3           593 0.999         6          1292 CHEMONT:0001292 Cyclic alcohols \textasciitilde{}}
+\CommentTok{\#\textgreater{}  4           512 0.995         6          1167 CHEMONT:0001167 Dialkyl ethers   }
+\CommentTok{\#\textgreater{}  5           834 0.971         6          1669 CHEMONT:0001670 Tertiary alcohols}
+\CommentTok{\#\textgreater{}  6          1191 0.962         6          2285 CHEMONT:0002286 Polyols          }
+\CommentTok{\#\textgreater{}  7           826 0.958         6          1660 CHEMONT:0001661 Secondary alcoho\textasciitilde{}}
+\CommentTok{\#\textgreater{}  8          1309 0.941         6          2459 CHEMONT:0002460 Alkanolamines    }
+\CommentTok{\#\textgreater{}  9          1299 1.00          5          2448 CHEMONT:0002449 Amines           }
+\CommentTok{\#\textgreater{} 10           116 1.00          5           129 CHEMONT:0000129 Alcohols and pol\textasciitilde{}}
+\CommentTok{\#\textgreater{} \# ... with 16 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+   Indeed, the above prepared instance data is too small to show the
+detail of the following function of MCnebula. Hence, we used another
+projects which has been collated done via above functions.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#\#\# the following project were auto{-}loaded while use \textquotesingle{}library(MCnebula)\textquotesingle{}}
+\NormalTok{inst\_formula\_set}
+\CommentTok{\#\textgreater{} \# A tibble: 700 x 8}
+\CommentTok{\#\textgreater{}    .id       rank precursorFormula molecularFormula adduct    ZodiacScore}
+\CommentTok{\#\textgreater{}    \textless{}chr\textgreater{}    \textless{}dbl\textgreater{} \textless{}chr\textgreater{}            \textless{}chr\textgreater{}            \textless{}chr\textgreater{}           \textless{}dbl\textgreater{}}
+\CommentTok{\#\textgreater{}  1 gnps1588     1 C24H17N3O2       C24H17N3O2       [M + H]+        0    }
+\CommentTok{\#\textgreater{}  2 gnps201      1 C17H20N2O5S      C17H20N2O5S      [M + H]+        0    }
+\CommentTok{\#\textgreater{}  3 gnps2137     1 C35H46O11        C35H46O11        [M + K]+        0.699}
+\CommentTok{\#\textgreater{}  4 gnps2588     1 C22H26O11        C22H26O11        [M + H]+        0    }
+\CommentTok{\#\textgreater{}  5 gnps2679     1 C32H38N2O6       C32H38N2O6       [M + H]+        0    }
+\CommentTok{\#\textgreater{}  6 gnps2731     1 C30H28O12        C30H28O12        [M + H]+        0    }
+\CommentTok{\#\textgreater{}  7 gnps2826     1 C32H56O13        C32H56O13        [M + H]+        0    }
+\CommentTok{\#\textgreater{}  8 gnps3071     1 C17H20O5         C17H20O5         [M + Na]+       0    }
+\CommentTok{\#\textgreater{}  9 gnps3116     1 C20H21NO4        C20H21NO4        [M + H]+        0    }
+\CommentTok{\#\textgreater{} 10 gnps3638     1 C19H22O5         C19H22O5         [M + H]+        0    }
+\CommentTok{\#\textgreater{} \# ... with 690 more rows, and 2 more variables:}
+\CommentTok{\#\textgreater{} \#   \textasciigrave{}massErrorPrecursor(ppm)\textasciigrave{} \textless{}dbl\textgreater{}, use\_zodiac \textless{}lgl\textgreater{}}
+\NormalTok{inst\_structure\_set}
+\CommentTok{\#\textgreater{} \# A tibble: 700 x 7}
+\CommentTok{\#\textgreater{}    .id      file\_name         score smiles tanimotoSimilar\textasciitilde{} structure\_rank name }
+\CommentTok{\#\textgreater{}    \textless{}chr\textgreater{}    \textless{}chr\textgreater{}             \textless{}dbl\textgreater{} \textless{}chr\textgreater{}             \textless{}dbl\textgreater{}          \textless{}dbl\textgreater{} \textless{}chr\textgreater{}}
+\CommentTok{\#\textgreater{}  1 gnps4260 C18H26N2O9\_[M+H]+ {-}34.3 CC(C(\textasciitilde{}            0.944              1 null }
+\CommentTok{\#\textgreater{}  2 gnps7278 C23H36O6\_[M+H]+   {-}32.2 CCC(C\textasciitilde{}            0.921              1 null }
+\CommentTok{\#\textgreater{}  3 gnps3385 C15H15NO3\_[M+H]+  {-}75.4 C1=CC\textasciitilde{}            0.613              1 null }
+\CommentTok{\#\textgreater{}  4 gnps1779 C16H17NO3\_[M+H]+  {-}14.5 C1CCN\textasciitilde{}            0.989              1 null }
+\CommentTok{\#\textgreater{}  5 gnps7175 C8H15N5S\_[M+H]+   {-}11.4 CCNC1\textasciitilde{}            1                  1 null }
+\CommentTok{\#\textgreater{}  6 gnps236  C18H20N2\_[M+H]+   {-}10.5 CN1CC\textasciitilde{}            1                  1 null }
+\CommentTok{\#\textgreater{}  7 gnps2588 C22H26O11\_[M+H]+  {-}13.6 CC(C)\textasciitilde{}            1                  1 null }
+\CommentTok{\#\textgreater{}  8 gnps5852 C33H52O13\_[M+Na]+ {-}52.0 CC12C\textasciitilde{}            0.843              1 null }
+\CommentTok{\#\textgreater{}  9 gnps4461 C12H14O5\_[M+H]+   {-}37.0 CCOC(\textasciitilde{}            0.854              1 null }
+\CommentTok{\#\textgreater{} 10 gnps3779 C23H22O13\_[M+H]+  {-}11.7 CC(=O\textasciitilde{}            1                  1 null }
+\CommentTok{\#\textgreater{} \# ... with 690 more rows}
+\KeywordTok{head}\NormalTok{(inst\_ppcp\_dataset, }\DataTypeTok{n =} \DecValTok{1}\NormalTok{)}
+\CommentTok{\#\textgreater{} $gnps106}
+\CommentTok{\#\textgreater{}         V1 relativeIndex}
+\CommentTok{\#\textgreater{}    1: 1.00             0}
+\CommentTok{\#\textgreater{}    2: 0.00             1}
+\CommentTok{\#\textgreater{}    3: 0.01             2}
+\CommentTok{\#\textgreater{}    4: 0.00             3}
+\CommentTok{\#\textgreater{}    5: 0.00             4}
+\CommentTok{\#\textgreater{}   {-}{-}{-}                   }
+\CommentTok{\#\textgreater{} 2505: 0.00          2504}
+\CommentTok{\#\textgreater{} 2506: 0.00          2505}
+\CommentTok{\#\textgreater{} 2507: 0.00          2506}
+\CommentTok{\#\textgreater{} 2508: 0.00          2507}
+\CommentTok{\#\textgreater{} 2509: 1.00          2508}
+\end{Highlighting}
+\end{Shaded}
+
+We set these data as global var, so as the MCnebula function could
+recognized them without additional parameters.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.MCn.formula\_set \textless{}{-}}\StringTok{ }\NormalTok{inst\_formula\_set}
+\NormalTok{.MCn.structure\_set \textless{}{-}}\StringTok{ }\NormalTok{inst\_structure\_set}
+\NormalTok{.MCn.ppcp\_dataset \textless{}{-}}\StringTok{ }\NormalTok{inst\_ppcp\_dataset}
+\end{Highlighting}
+\end{Shaded}
+
+Re-execute the command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{collate\_ppcp}\NormalTok{(}
+  \DataTypeTok{min\_possess =} \DecValTok{20}\NormalTok{,}
+  \DataTypeTok{max\_possess\_pct =} \FloatTok{0.1}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} [INFO] MCnebula run: collate\_ppcp}
+\CommentTok{\#\textgreater{} \#\# collate\_ppcp: check\_dir}
+\CommentTok{\#\textgreater{} \#\# STAT of PPCP dataset: 1(formula with PPCP)/5(all formula) }
+\CommentTok{\#\textgreater{} \#\# collate\_ppcp: method\_summarize\_nebula\_class}
+\CommentTok{\#\textgreater{} \#\# collate\_ppcp: method\_summarize\_nebula\_index.}
+\CommentTok{\#\textgreater{} \#\# Method part: class\_retrieve}
+\CommentTok{\#\textgreater{} \#\# Method part: identical\_filter}
+\CommentTok{\#\textgreater{} \#\# Method part: fun\_filter\_via\_struc\_score}
+\CommentTok{\#\textgreater{} [INFO] MCnebula Job Done: collate\_ppcp.}
+\CommentTok{\#\textgreater{} \# A tibble: 1,332 x 5}
+\CommentTok{\#\textgreater{} \# Groups:   relativeIndex [38]}
+\CommentTok{\#\textgreater{}    relativeIndex name                   hierarchy .id         V1}
+\CommentTok{\#\textgreater{}            \textless{}int\textgreater{} \textless{}chr\textgreater{}                      \textless{}int\textgreater{} \textless{}chr\textgreater{}    \textless{}dbl\textgreater{}}
+\CommentTok{\#\textgreater{}  1             4 Organosulfur compounds         3 gnps1816  1   }
+\CommentTok{\#\textgreater{}  2             4 Organosulfur compounds         3 gnps1914  1   }
+\CommentTok{\#\textgreater{}  3             4 Organosulfur compounds         3 gnps201   1   }
+\CommentTok{\#\textgreater{}  4             4 Organosulfur compounds         3 gnps449   0.99}
+\CommentTok{\#\textgreater{}  5             4 Organosulfur compounds         3 gnps469   0.97}
+\CommentTok{\#\textgreater{}  6             4 Organosulfur compounds         3 gnps494   0.98}
+\CommentTok{\#\textgreater{}  7             4 Organosulfur compounds         3 gnps4969  1   }
+\CommentTok{\#\textgreater{}  8             4 Organosulfur compounds         3 gnps5242  0.99}
+\CommentTok{\#\textgreater{}  9             4 Organosulfur compounds         3 gnps5693  0.99}
+\CommentTok{\#\textgreater{} 10             4 Organosulfur compounds         3 gnps5917  0.99}
+\CommentTok{\#\textgreater{} \# ... with 1,322 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{generate-network-graph}{%
+\paragraph{Generate network graph}\label{generate-network-graph}}
+
+\hypertarget{generate-parent-nebula-graph}{%
+\subparagraph{Generate parent-nebula
+graph}\label{generate-parent-nebula-graph}}
+
+Of note, this function will conduct spectral similarity (fragmentation
+spectra) computation and reformated these similarity (cosine) as edges
+file. This is performed via \texttt{MSnbase::compareSpectra}. It usually
+cost some time to get results. Here, we used a randomly formed edges
+file to avoid it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{edges \textless{}{-}}\StringTok{ }\NormalTok{.MCn.formula\_set}\OperatorTok{$}\NormalTok{.id }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\KeywordTok{combn}\NormalTok{(}\DecValTok{2}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\KeywordTok{t}\NormalTok{()}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{100}\NormalTok{)}
+\CommentTok{\#\#\# randomly get combination.}
+\NormalTok{edges \textless{}{-}}\StringTok{ }\NormalTok{edges[}\KeywordTok{sample}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\KeywordTok{nrow}\NormalTok{(edges), }\DecValTok{1000}\NormalTok{), ] }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{as\_tibble}\NormalTok{() }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{rename}\NormalTok{(}
+    \DataTypeTok{.id\_1 =} \DecValTok{1}\NormalTok{,}
+    \DataTypeTok{.id\_2 =} \DecValTok{2}\NormalTok{) }\OperatorTok{\%\textgreater{}\%}\StringTok{ }
+\StringTok{  }\NormalTok{dplyr}\OperatorTok{::}\KeywordTok{mutate}\NormalTok{(}
+    \DataTypeTok{dotproduct =} \KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, }\DataTypeTok{mean =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{sd =} \FloatTok{0.1}\NormalTok{), }
+    \DataTypeTok{mass\_diff =} \KeywordTok{rnorm}\NormalTok{(}\DecValTok{1000}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{200}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+\NormalTok{  )}
+\NormalTok{tmp.edges \textless{}{-}}\StringTok{ }\KeywordTok{tempfile}\NormalTok{()}
+\CommentTok{\#\#\# write done}
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{write\_tsv}\NormalTok{(edges, }\DataTypeTok{filename =}\NormalTok{ tmp.edges)}
+\CommentTok{\#\#\# show details}
+\NormalTok{edges}
+\CommentTok{\#\textgreater{} \# A tibble: 1,000 x 4}
+\CommentTok{\#\textgreater{}    .id\_1    .id\_2    dotproduct mass\_diff}
+\CommentTok{\#\textgreater{}    \textless{}chr\textgreater{}    \textless{}chr\textgreater{}         \textless{}dbl\textgreater{}     \textless{}dbl\textgreater{}}
+\CommentTok{\#\textgreater{}  1 gnps2299 gnps8202      0.791     150. }
+\CommentTok{\#\textgreater{}  2 gnps2056 gnps3366      0.503     224. }
+\CommentTok{\#\textgreater{}  3 gnps4151 gnps8192      0.414     199. }
+\CommentTok{\#\textgreater{}  4 gnps2468 gnps2494      0.575     129. }
+\CommentTok{\#\textgreater{}  5 gnps5852 gnps8615      0.604      90.1}
+\CommentTok{\#\textgreater{}  6 gnps2503 gnps4589      0.742     212. }
+\CommentTok{\#\textgreater{}  7 gnps4564 gnps4790      0.650     128. }
+\CommentTok{\#\textgreater{}  8 gnps2437 gnps5779      0.424     256. }
+\CommentTok{\#\textgreater{}  9 gnps4589 gnps8087      0.530     223. }
+\CommentTok{\#\textgreater{} 10 gnps4661 gnps6791      0.543     228. }
+\CommentTok{\#\textgreater{} \# ... with 990 more rows}
+\end{Highlighting}
+\end{Shaded}
+
+Subsequently, we use this edges file to generate parent-nebula graph.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{generate\_parent\_nebula}\NormalTok{(}
+  \DataTypeTok{rm\_parent\_isolate\_nodes =}\NormalTok{ T,}
+  \CommentTok{\#\# specify the edges file}
+  \DataTypeTok{edges\_file =}\NormalTok{ tmp.edges}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} [INFO] MCnebula run: generate\_parent\_nebula}
+\CommentTok{\#\textgreater{} \#\# generate\_parent\_nebula: file.exists(edges\_file) == T.}
+\CommentTok{\#\textgreater{} Escape from time{-}consuming computation}
+\CommentTok{\#\textgreater{} [INFO] MCnebula Job Done: generate\_parent\_nebula}
+\end{Highlighting}
+\end{Shaded}
+
+This function will generate nodes data (chemical formula and strucutre
+annotation) and edges data (if the edges file were not specified but
+real-time computed). For most, parent-nebula graph was generated.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{.MCn.parent\_nodes}
+\CommentTok{\#\textgreater{} \# A tibble: 700 x 14}
+\CommentTok{\#\textgreater{}    .id       rank precursorFormula molecularFormula adduct    ZodiacScore}
+\CommentTok{\#\textgreater{}    \textless{}chr\textgreater{}    \textless{}dbl\textgreater{} \textless{}chr\textgreater{}            \textless{}chr\textgreater{}            \textless{}chr\textgreater{}           \textless{}dbl\textgreater{}}
+\CommentTok{\#\textgreater{}  1 gnps106      1 C11H12O5         C11H12O5         [M + H]+        1    }
+\CommentTok{\#\textgreater{}  2 gnps108      1 C17H35NO2        C17H35NO2        [M + H]+        1    }
+\CommentTok{\#\textgreater{}  3 gnps1146     1 C19H22O11        C19H22O11        [M + Na]+       0.880}
+\CommentTok{\#\textgreater{}  4 gnps1153     1 C12H21N          C12H21N          [M + H]+        1    }
+\CommentTok{\#\textgreater{}  5 gnps1167     1 C22H32O3         C22H32O3         [M + H]+        1    }
+\CommentTok{\#\textgreater{}  6 gnps1168     1 C21H26O5         C21H26O5         [M + H]+        1    }
+\CommentTok{\#\textgreater{}  7 gnps1170     1 C24H34O4         C24H34O4         [M + H]+        1    }
+\CommentTok{\#\textgreater{}  8 gnps1171     1 C21H30O2         C21H30O2         [M + H]+        1    }
+\CommentTok{\#\textgreater{}  9 gnps1175     1 C22H38O5         C22H38O5         [M + Na]+       1    }
+\CommentTok{\#\textgreater{} 10 gnps1176     1 C21H28O5         C21H28O5         [M + H]+        1    }
+\CommentTok{\#\textgreater{} \# ... with 690 more rows, and 8 more variables:}
+\CommentTok{\#\textgreater{} \#   \textasciigrave{}massErrorPrecursor(ppm)\textasciigrave{} \textless{}dbl\textgreater{}, use\_zodiac \textless{}lgl\textgreater{}, file\_name \textless{}chr\textgreater{},}
+\CommentTok{\#\textgreater{} \#   score \textless{}dbl\textgreater{}, smiles \textless{}chr\textgreater{}, tanimotoSimilarity \textless{}dbl\textgreater{}, structure\_rank \textless{}dbl\textgreater{},}
+\CommentTok{\#\textgreater{} \#   compound\_name \textless{}chr\textgreater{}}
+\NormalTok{.MCn.parent\_graph}
+\CommentTok{\#\textgreater{} IGRAPH 8f379f2 DN{-}{-} 661 1000 {-}{-} }
+\CommentTok{\#\textgreater{} + attr: name (v/c), rank (v/n), precursorFormula (v/c),}
+\CommentTok{\#\textgreater{} | molecularFormula (v/c), adduct (v/c), ZodiacScore (v/n),}
+\CommentTok{\#\textgreater{} | massErrorPrecursor(ppm) (v/n), use\_zodiac (v/l), file\_name (v/c),}
+\CommentTok{\#\textgreater{} | score (v/n), smiles (v/c), tanimotoSimilarity (v/n), structure\_rank}
+\CommentTok{\#\textgreater{} | (v/n), compound\_name (v/c), dotproduct (e/n), mass\_diff (e/n)}
+\CommentTok{\#\textgreater{} + edges from 8f379f2 (vertex names):}
+\CommentTok{\#\textgreater{}  [1] gnps2299{-}\textgreater{}gnps8202 gnps2056{-}\textgreater{}gnps3366 gnps4151{-}\textgreater{}gnps8192 gnps2468{-}\textgreater{}gnps2494}
+\CommentTok{\#\textgreater{}  [5] gnps5852{-}\textgreater{}gnps8615 gnps2503{-}\textgreater{}gnps4589 gnps4564{-}\textgreater{}gnps4790 gnps2437{-}\textgreater{}gnps5779}
+\CommentTok{\#\textgreater{}  [9] gnps4589{-}\textgreater{}gnps8087 gnps4661{-}\textgreater{}gnps6791 gnps2966{-}\textgreater{}gnps633  gnps5860{-}\textgreater{}gnps6479}
+\CommentTok{\#\textgreater{} [13] gnps4898{-}\textgreater{}gnps7107 gnps2345{-}\textgreater{}gnps3674 gnps3268{-}\textgreater{}gnps4120 gnps3164{-}\textgreater{}gnps8482}
+\CommentTok{\#\textgreater{} + ... omitted several edges}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{generate-child-nebulae-graph}{%
+\subparagraph{Generate child-nebulae
+graph}\label{generate-child-nebulae-graph}}
+
+This function generate multiple network graph upon parent-nebula (nodes
+and edges) according to compound classification.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{generate\_child\_nebulae}\NormalTok{(}
+  \DataTypeTok{max\_edges =} \DecValTok{5}\NormalTok{,}
+  \CommentTok{\#\# this will write a output of .graphml, which support by Cytoscape.}
+  \DataTypeTok{output\_format =} \StringTok{"graphml"}
+\NormalTok{)}
+\CommentTok{\#\textgreater{} [INFO] MCnebula run: generate\_child\_nebulae}
+\CommentTok{\#\textgreater{} [INFO] MCnebula Job Done: generate\_child\_nebulae}
+\end{Highlighting}
+\end{Shaded}
+
+These graph were stored in list.
+
+\begin{verbatim}
+head(.MCn.child_graph_list, n = 2)
+\end{verbatim}
+
+\hypertarget{visualization-of-chemical-nebula}{%
+\paragraph{Visualization of
+chemical-nebula}\label{visualization-of-chemical-nebula}}
+
+\hypertarget{visualization-of-parent-nebula}{%
+\subparagraph{Visualization of
+parent-nebula}\label{visualization-of-parent-nebula}}
+
+All visualization in MCnebula package are output with .svg image.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{visualize\_parent\_nebula}\NormalTok{(}
+  \DataTypeTok{layout =} \StringTok{"kk"}\NormalTok{,}
+  \CommentTok{\#\# map nodes color with superclass}
+  \DataTypeTok{nodes\_color =} \KeywordTok{c}\NormalTok{(}\StringTok{"hierarchy"}\NormalTok{ =}\StringTok{ }\DecValTok{3}\NormalTok{),}
+  \DataTypeTok{width =} \DecValTok{25}\NormalTok{,}
+  \DataTypeTok{height =} \DecValTok{20}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{rsvg::rsvg\_png} could be applied to convert .svg to other png
+file.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{from.svg \textless{}{-}}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}
+\NormalTok{  .MCn.output, }\StringTok{"/"}\NormalTok{, .MCn.results,}
+  \StringTok{"/parent\_nebula/parent\_nebula.svg"}
+\NormalTok{)}
+\NormalTok{to.png \textless{}{-}}\StringTok{ }\KeywordTok{paste0}\NormalTok{(}
+\NormalTok{  .MCn.output, }\StringTok{"/"}\NormalTok{, .MCn.results,}
+  \StringTok{"/parent\_nebula/parent\_nebula.png"}
+\NormalTok{)}
+\NormalTok{rsvg}\OperatorTok{::}\KeywordTok{rsvg\_png}\NormalTok{(from.svg, to.png)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{visualization-of-child-nebula}{%
+\subparagraph{Visualization of
+child-nebula}\label{visualization-of-child-nebula}}
+
+This function draw child-nebula in grid panel. The overview of
+child-nebula shows the abundant classes of this LC-MS/MS dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MCnebula}\OperatorTok{::}\KeywordTok{visualize\_child\_nebulae}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+All output files:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{list.files}\NormalTok{(}\KeywordTok{paste0}\NormalTok{(.MCn.output, }\StringTok{"/"}\NormalTok{, .MCn.results), }\DataTypeTok{recursive =}\NormalTok{ T)}
+\CommentTok{\#\textgreater{}  [1] "child\_nebula/Alkanolamines.graphml"                   }
+\CommentTok{\#\textgreater{}  [2] "child\_nebula/Aralkylamines.graphml"                   }
+\CommentTok{\#\textgreater{}  [3] "child\_nebula/Benzenediols.graphml"                    }
+\CommentTok{\#\textgreater{}  [4] "child\_nebula/Benzoic acid esters.graphml"             }
+\CommentTok{\#\textgreater{}  [5] "child\_nebula/Benzoyl derivatives.graphml"             }
+\CommentTok{\#\textgreater{}  [6] "child\_nebula/Catechols.graphml"                       }
+\CommentTok{\#\textgreater{}  [7] "child\_nebula/Coumarins and derivatives.graphml"       }
+\CommentTok{\#\textgreater{}  [8] "child\_nebula/Dialkyl ethers.graphml"                  }
+\CommentTok{\#\textgreater{}  [9] "child\_nebula/Disaccharides.graphml"                   }
+\CommentTok{\#\textgreater{} [10] "child\_nebula/Diterpenoids.graphml"                    }
+\CommentTok{\#\textgreater{} [11] "child\_nebula/Fatty acids and conjugates.graphml"      }
+\CommentTok{\#\textgreater{} [12] "child\_nebula/Flavans.graphml"                         }
+\CommentTok{\#\textgreater{} [13] "child\_nebula/Flavonoid glycosides.graphml"            }
+\CommentTok{\#\textgreater{} [14] "child\_nebula/Flavonoids.graphml"                      }
+\CommentTok{\#\textgreater{} [15] "child\_nebula/Furans.graphml"                          }
+\CommentTok{\#\textgreater{} [16] "child\_nebula/Gamma butyrolactones.graphml"            }
+\CommentTok{\#\textgreater{} [17] "child\_nebula/Hydroxy acids and derivatives.graphml"   }
+\CommentTok{\#\textgreater{} [18] "child\_nebula/Indoles and derivatives.graphml"         }
+\CommentTok{\#\textgreater{} [19] "child\_nebula/Lactams.graphml"                         }
+\CommentTok{\#\textgreater{} [20] "child\_nebula/Methoxybenzenes.graphml"                 }
+\CommentTok{\#\textgreater{} [21] "child\_nebula/Methoxyphenols.graphml"                  }
+\CommentTok{\#\textgreater{} [22] "child\_nebula/Monoterpenoids.graphml"                  }
+\CommentTok{\#\textgreater{} [23] "child\_nebula/O{-}methylated flavonoids.graphml"         }
+\CommentTok{\#\textgreater{} [24] "child\_nebula/Organosulfur compounds.graphml"          }
+\CommentTok{\#\textgreater{} [25] "child\_nebula/Oxosteroids.graphml"                     }
+\CommentTok{\#\textgreater{} [26] "child\_nebula/Pregnane steroids.graphml"               }
+\CommentTok{\#\textgreater{} [27] "child\_nebula/Primary amines.graphml"                  }
+\CommentTok{\#\textgreater{} [28] "child\_nebula/Pyridines and derivatives.graphml"       }
+\CommentTok{\#\textgreater{} [29] "child\_nebula/Pyrrolidines.graphml"                    }
+\CommentTok{\#\textgreater{} [30] "child\_nebula/Sesquiterpenoids.graphml"                }
+\CommentTok{\#\textgreater{} [31] "child\_nebula/Steroids and steroid derivatives.graphml"}
+\CommentTok{\#\textgreater{} [32] "child\_nebula/Styrenes.graphml"                        }
+\CommentTok{\#\textgreater{} [33] "child\_nebula/Terpene glycosides.graphml"              }
+\CommentTok{\#\textgreater{} [34] "child\_nebula/Terpene lactones.graphml"                }
+\CommentTok{\#\textgreater{} [35] "child\_nebula/Tertiary amines.graphml"                 }
+\CommentTok{\#\textgreater{} [36] "child\_nebula/Tetrahydrofurans.graphml"                }
+\CommentTok{\#\textgreater{} [37] "child\_nebula/Triterpenoids.graphml"                   }
+\CommentTok{\#\textgreater{} [38] "child\_nebula/Vinylogous esters.graphml"               }
+\CommentTok{\#\textgreater{} [39] "method\_pick\_formula\_excellent.structure.tsv"          }
+\CommentTok{\#\textgreater{} [40] "method\_pick\_formula\_excellent.tsv"                    }
+\CommentTok{\#\textgreater{} [41] "nebula\_index.tsv"                                     }
+\CommentTok{\#\textgreater{} [42] "parent\_nebula/parent\_nebula\_edges.tsv"                }
+\CommentTok{\#\textgreater{} [43] "parent\_nebula/parent\_nebula\_nodes.tsv"                }
+\CommentTok{\#\textgreater{} [44] "parent\_nebula/parent\_nebula.graphml"}
+\end{Highlighting}
+\end{Shaded}
+
+
+
+
+\end{document}
