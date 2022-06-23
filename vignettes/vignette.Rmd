@@ -151,7 +151,8 @@ Hence, we used another projects which has been collated done via above functions
 ## the following project were auto-loaded while use 'library(MCnebula)'
 inst_formula_set
 inst_structure_set
-head(inst_ppcp_dataset, n = 1)
+head(inst_ppcp_dataset, n = 1) %>% 
+  lapply(dplyr::as_tibble)
 ```
 
 We set these data as global var, so as the MCnebula function could recognized them without additional parameters.
@@ -210,6 +211,14 @@ MCnebula::generate_parent_nebula(
   ## specify the edges file
   edges_file = tmp.edges
 )
+```
+
+This function will generate nodes data (chemical formula and strucutre annotation) and edges data (if the edges file were not specified but real-time computed).
+For most, parent-nebula graph was generated.
+
+```(r, echo = T)
+.MCn.parent_nodes
+.MCn.parent_graph
 ```
 
 ```{r, echo = T}

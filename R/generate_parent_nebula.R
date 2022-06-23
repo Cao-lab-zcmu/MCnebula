@@ -54,7 +54,7 @@ generate_parent_nebula <-
     }else if(edges_method == "method_formula_based_spec_compare"){
       ## with edges_method
       if(!is.null(edges_file) & file.exists(edges_file)){
-        cat("## generate_parent_nebula: file.exists(edges_file) == T. Escape from time-consuming computation\n")
+        cat("## generate_parent_nebula: file.exists(edges_file) == T.\nEscape from time-consuming computation\n")
         edges <- read_tsv(edges_file) %>%
           dplyr::mutate_at(c(".id_1", ".id_2"), as.character) %>%
           dplyr::mutate_at(c(colnames(.)[3:4]), as.numeric)
