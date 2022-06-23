@@ -60,7 +60,7 @@ collate_ppcp <-
         "\n")
     ## ---------------------------------------------------------------------- 
     ## load all ppcp dataset
-    if(!exists(.MCn.ppcp_dataset)){
+    if(!exists(".MCn.ppcp_dataset")){
       ppcp_dataset <- pbapply::pblapply(meta_dir_filter$full.name, read_fpt)
     }
     names(ppcp_dataset) <- meta_dir_filter$".id"
