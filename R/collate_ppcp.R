@@ -54,13 +54,15 @@ collate_ppcp <-
              ## note that some formula is no fingerprint computed
              ppcp = file.exists(full.name))
       ## ------------------------------------- 
-      meta_dir_filter <- dplyr::filter(meta_dir, ppcp == T)
-      cat("## STAT of PPCP dataset:",
-          paste0(nrow(meta_dir_filter), "(formula with PPCP)", "/", nrow(meta_dir), "(all formula)"), 
-          "\n")
+    meta_dir_filter <- dplyr::filter(meta_dir, ppcp == T)
+    cat("## STAT of PPCP dataset:",
+        paste0(nrow(meta_dir_filter), "(formula with PPCP)", "/", nrow(meta_dir), "(all formula)"), 
+        "\n")
     ## ---------------------------------------------------------------------- 
     ## load all ppcp dataset
-    ppcp_dataset <- pbapply::pblapply(meta_dir_filter$full.name, read_fpt)
+    if(!exists(.MCn.ppcp_dataset)){
+      ppcp_dataset <- pbapply::pblapply(meta_dir_filter$full.name, read_fpt)
+    }
     names(ppcp_dataset) <- meta_dir_filter$".id"
     .MCn.ppcp_dataset <<- ppcp_dataset
     ## ---------------------------------------------------------------------- 
