@@ -62,11 +62,11 @@ collate_ppcp <-
     ## load all ppcp dataset
     if(!exists(".MCn.ppcp_dataset")){
       ppcp_dataset <- pbapply::pblapply(meta_dir_filter$full.name, read_fpt)
+      names(ppcp_dataset) <- meta_dir_filter$".id"
+      .MCn.ppcp_dataset <<- ppcp_dataset
     }else{
       ppcp_dataset <- .MCn.ppcp_dataset
     }
-    names(ppcp_dataset) <- meta_dir_filter$".id"
-    .MCn.ppcp_dataset <<- ppcp_dataset
     ## ---------------------------------------------------------------------- 
     ## summarize nebula_class
     if(nebula_class){
