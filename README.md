@@ -204,7 +204,7 @@ visualize_child_nebulae(
 Last, users are encouraged for in-depth visualization of child-nebula:
 
 ```
-annotate_child_nebula(
+annotate_child_nebulae(
   ## string, i.e. class name in nebula-index
   nebula_name,
   layout = "fr",

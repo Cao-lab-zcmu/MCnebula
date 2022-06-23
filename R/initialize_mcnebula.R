@@ -39,11 +39,11 @@ initialize_mcnebula <-
     if(rm_mc.set){
       rm_mc.set(envir = .GlobalEnv)
     }
-    if(file.exists(sirius_path)==F | file.exists(output_path)==F){
+    if(!file.exists(sirius_path) | !file.exists(output_path)){
       cat("File path not find.\n")
       return()
     }
-    if(file.exists(paste0(sirius_path, "/", ".format"))==F){
+    if(!file.exists(paste0(sirius_path, "/", ".format"))){
       cat("SIRIUS project not find.\n")
       return()
     }

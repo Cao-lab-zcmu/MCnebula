@@ -1,5 +1,5 @@
 ---
-title: "vignette"
+title: "MCnebula workflow for LC-MS/MS dataset analysis"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{vignette}
@@ -14,6 +14,204 @@ knitr::opts_chunk$set(
 )
 ```
 
+# R and other softs Setup
+
+## R setup
+
 ```{r setup}
 library(MCnebula)
+library(dplyr)
+library(ggplot2)
+library(ggraph)
+library(grid)
+```
+
+## Others setup
+
+The prerequisite soft for MCnebula is SIRIUS 4.
+Users can download that from <https://bio.informatik.uni-jena.de/software/sirius/>.  
+
+&ensp;&ensp; 
+In addition, users are encouraged to perform MZmine 2 (<https://github.com/mzmine/mzmine2>) for LC-MS/MS data processing.
+
+&ensp;&ensp; 
+Before mass spectrometry data been processed, the raw data should be converted to .mzML or .mzXML file in most cases.
+ProteoWizard (<https://proteowizard.sourceforge.io/>) could be implemented for conversion.
+
+# Data preprocessing
+
+## Raw data processing
+
+For MZmine2 processing, an XML batch file outlined the example parameters for waters Qtof could be find in <https://github.com/Cao-lab-zcmu/research-supplementary>.
+
+## SIRIUS computation workflow
+
+Here we prepared some example files for this vignette to better illustrate MCnebula workflow.
+
+```{r, echo = T}
+eg.path <- system.file("extdata", "raw_instance.tar.gz", package = "MCnebula")
+tmp <- tempdir()
+utils::untar(eg.path, exdir = tmp)
+mgf.path <- paste0(tmp, "/", "instance5.mgf")
+## show details of .mgf
+data.table::fread(mgf.path, header = F, sep = NULL)
+```
+
+If SIRIUS soft has been download locally and the Environment Path has been set down (for example, set `PATH=$PATH:/you/your_dir/sirius-gui/bin` in `~/.bashrc`), the following is availlable:
+
+```{r, eval = F}
+system(paste0("sirius -i ", mgf.path, " -o test --maxmz 800 formula -c 50 zodiac structure canopus"))
+```
+
+A more simpler approach is to use SIRIUS GUI version.
+
+## MCnebula processing
+
+In deed, the computation of SIRIUS is time-consumed. It may cost several hours even days.
+Here, we prepared a fairly small dataset (SIRIUS project space) which has been done from SIRIUS computation.
+The following show the detail of this dataset.
+
+```{r, echo = T}
+list.files(tmp) %>% 
+  .[which(. != "instance5.mgf")]
+```
+
+### Data collating
+
+To begin with, MCnebula should he initialized in SIRIUS project.
+
+```{r, echo = T}
+MCnebula::initialize_mcnebula(tmp, rm_mc.set = T)
+```
+
+This will set some global var.
+
+```{r, echo = T}
+ls(pattern = "^\\.MCn\\.", all.names = T)
+```
+
+Users can manually modify the setup.
+
+#### Collate structure**
+
+```{r, echo = T}
+MCnebula::collate_structure(
+  exclude_element = c("Cl", "S", "P"),
+  ppm_error = 20
+)
+```
+
+The results:
+
+```{r, echo = T}
+.MCn.formula_set
+.MCn.structure_set
+```
+
+Next, we collate the metadata of chemical classes hierarchy.
+
+```{r, echo = T}
+MCnebula::build_classes_tree_list()
+```
+
+The frame of returned project, e.g.:
+
+```{r, echo = T}
+.MCn.class_tree_list[[4]]
+```
+
+#### Collate PPCP data.**
+
+This function retrieve all posterior probability of classification prediction (PPCP) of compounds and gathered them as `.MCn.ppcp_dataset`.
+Furthermore, in default, this function also summarise `.MCn.nebula_class` and `.MCn.nebula_index` upon the data of `.MCn.ppcp_dataset`.
+If done, `.MCn.nebula_index` would be returned.
+
+```{r, echo = T, eval = T}
+MCnebula::collate_ppcp(
+  ## due to the size of example dataset, we set much smaller herein
+  ## min_possess, 20 or more may be better
+  min_possess = 1,
+  ## 0.1 may better
+  max_possess_pct = 0.9
+)
+```
+
+In addition, `collate_ppcp` would set following global var:
+
+```{r, echo = T}
+head(.MCn.ppcp_dataset, n = 1)
+head(.MCn.nebula_class, n = 1)
+```
+
+&ensp;&ensp; 
+Indeed, the above prepared instance data is too small to show the detail of the following function of MCnebula.
+Hence, we used another projects which has been collated done via above functions.
+
+```{r, echo = T}
+## the following project were auto-loaded while use 'library(MCnebula)'
+inst_formula_set
+inst_structure_set
+head(inst_ppcp_dataset, n = 1)
+```
+
+We set these data as global var, so as the MCnebula function could recognized them without additional parameters.
+
+```{r, echo = T}
+.MCn.formula_set <- inst_formula_set
+.MCn.structure_set <- inst_structure_set
+.MCn.ppcp_dataset <- inst_ppcp_dataset
+```
+
+Re-execute the command:
+
+```{r, echo = T, eval = T}
+MCnebula::collate_ppcp(
+  min_possess = 20,
+  max_possess_pct = 0.1
+)
+```
+
+### Generate network graph
+
+#### Generate parent-nebula graph
+
+Of note, this function will conduct spectral similarity (fragmentation spectra) computation and reformated these similarity (cosine) as edges file.
+This is performed via `MSnbase::compareSpectra`.
+It usually cost some time to get results.
+Here, we used a randomly formed edges file to avoid it.
+
+```{r, echo = T}
+edges <- .MCn.formula_set$.id %>% 
+  combn(2) %>% 
+  t()
+set.seed(1)
+## randomly get combination.
+edges <- edges[sample(1:nrow(edges), 5000), ] %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::rename(
+    .id_1 = 1,
+    .id_2 = 2) %>% 
+  dplyr::mutate(
+    dotproduct = rnorm(5000, mean = 0.5, sd = 0.1), 
+    mass_diff = rnorm(5000, mean = 200, sd = 50),
+  )
+tmp.edges <- tempfile()
+## write done
+MCnebula::write_tsv(edges, filename = tmp.edges)
+## show details
+edges
+```
+
+Subsequently, we use this edges file to generate parent graph.
+
+```{r, echo = T}
+MCnebula::generate_parent_nebula(
+  rm_parent_isolate_nodes = T,
+  ## specify the edges file
+  edges_file = tmp.edges
+)
+```
+
+```{r, echo = T}
+list.files(paste0(.MCn.output, "/", .MCn.results), recursive = T)
 ```
