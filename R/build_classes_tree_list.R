@@ -33,7 +33,7 @@ build_classes_tree_list <-
       df <- data[data$parentId %in% df$id, ]
     }
     .MCn.class_tree_list <<- list
-    cat("INFO: Classification Index in.MCn.sirius project --->", class_index, "\nA total of 11 levels. These classes (upon ClassyFire and CANOPUS) were separated into sub-lists.
+    cat("INFO: Classification Index in.MCn.sirius project --->", class_index, "\nA total of 11 levels.\nThese classes (upon ClassyFire and CANOPUS) were separated into sub-lists.
         Use following arguments to get some specific classes:
         .MCn.class_tree_list[[3]] >>> superclass
         .MCn.class_tree_list[[4]] >>> class
