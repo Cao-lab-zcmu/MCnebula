@@ -1,7 +1,7 @@
 # MCnebula
 
 MCnebula algorithm integration in R.
-Guidance for MCnebula workflow:
+Guidance for MCnebula application:
 [MCnebula_workflow](http://htmlpreview.github.io/?https://github.com/Cao-lab-zcmu/VIgnette/blob/master/MCnebula_workflow.html).
 
 ## Installation 
