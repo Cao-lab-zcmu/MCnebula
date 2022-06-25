@@ -1,6 +1,6 @@
 ---
 title: "MCnebula workflow for LC-MS/MS dataset analysis"
-author: "Lichuang Huang"
+author: "Lichuang Huang; Lu Wang; Qiyuan Shan; Qiang Lv; Keda Lu; Gang Cao"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{vignette}
