@@ -50,20 +50,19 @@ method_formula_based_spec_compare <-
            formula_set = .MCn.formula_set,
            structure_set = .MCn.structure_set,
            target_ids = NULL,
+           get_meta_dir = F,
            ...
            ){
     ## ------------------------------------------------------------------------------------------
     ## check dirs ---- spectra
     if(length(dirs) == 1 & dirs[1] == "all"){
       dirs <- list.files(path = path, pattern="^[0-9](.*)_(.*)_(.*)$", full.names = F)
-      cat("## Method part: check_dir\n")
-      check <- pbapply::pbsapply(dirs, check_dir, file = "spectra") %>% unname
-    }else{
-      check <- pbapply::pbsapply(dirs, check_dir, file = "spectra") %>% unname
     }
+    cat("## Method part: check_dir\n")
+    check <- pbapply::pbsapply(dirs, check_dir, file = "spectra") %>% unname
     ## ------------------------------------------------------------------------------------------
     ## lock on file location
-    meta_dir <- dirs[which(check == T)] %>%
+    meta_dir <- dirs[which(check)] %>%
       data.frame() %>%
       dplyr::rename(dir = ".") %>%
       dplyr::mutate(.id = sapply(dir, grep_id)) %>%
@@ -81,10 +80,12 @@ method_formula_based_spec_compare <-
                               full.name = paste0(path, "/", dir, "/", "spectra", "/", target), 
                               ## these files need to be check and filter (whether exist)
                               spectra = file.exists(full.name))
-    meta_dir_filter <- dplyr::filter(meta_dir, spectra == T)
+    meta_dir_filter <- dplyr::filter(meta_dir, spectra)
     cat("## STAT of spectra dataset:",
         paste0(nrow(meta_dir_filter), "(formula with match spectra)", "/", nrow(meta_dir), "(all formula)"), 
         "\n")
+    if(get_meta_dir)
+      return(meta_dir_filter)
     ## ------------------------------------------------------------------------------------------
     ## load all spectra dataset
     spectra_cache <- new.env()
@@ -96,7 +97,7 @@ method_formula_based_spec_compare <-
                                       ))
     ## ------------------------------------------------------------------------------------------
     ## enumeration combination
-    if(only_identical_class == T){
+    if(only_identical_class){
       ## enumeration combination in each hierarchy
       combn <- dplyr::filter(.MCn.nebula_index,
                              hierarchy >= min_hierarchy,
