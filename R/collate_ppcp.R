@@ -45,7 +45,7 @@ collate_ppcp <-
     meta_dir <- dirs[which(check == T)] %>%
       data.frame() %>%
       dplyr::rename(dir = ".") %>%
-      dplyr::mutate(.id = sapply(dir, grep_id)) %>%
+      dplyr::mutate(.id = grep_id(dir)) %>%
       merge(.MCn.formula_set, by = ".id", all.x = T, sort = F) %>%
       dplyr::mutate(adduct_trans = gsub(" ", "", adduct),
              target = paste0(precursorFormula, "_", adduct_trans, ".fpt"), 

@@ -65,7 +65,7 @@ method_formula_based_spec_compare <-
     meta_dir <- dirs[which(check)] %>%
       data.frame() %>%
       dplyr::rename(dir = ".") %>%
-      dplyr::mutate(.id = sapply(dir, grep_id)) %>%
+      dplyr::mutate(.id = grep_id(dir)) %>%
       merge(formula_set, by = ".id", all.x = T) %>%
       merge(structure_set[, c(".id", "tanimotoSimilarity")], by = ".id", all.x = T)
     if(is.vector(target_ids)){

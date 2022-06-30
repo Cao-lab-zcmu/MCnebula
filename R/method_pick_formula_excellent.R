@@ -29,7 +29,7 @@ method_pick_formula_excellent <-
     ## ----------------------------------------------------------------------
     if(length(dir) >= 1){
       meta <- data.table::data.table(dir = dir)
-      meta <- dplyr::mutate(meta, key_id = lapply(dir, grep_id))
+      meta <- dplyr::mutate(meta, key_id = grep_id(dir))
     }else{
       meta <- data.table::data.table(key_id = key_id, dir = get_dir(key_id))
     }
