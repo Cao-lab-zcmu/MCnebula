@@ -71,7 +71,7 @@ collate_structure <-
   cat( paste0("[INFO] MCnebula Job Done: collate_structure.\n") )
 }
 grep_id <- function(x){
-  stringr::str_extract(x, "(?<=_).{1,}$")
+  stringr::str_extract(x, "(?<=_)[^_]{1,}$")
 }
 check_dir <- function(dir, path = .MCn.sirius, file = "compound.info"){
   if(file.exists(paste0(path, "/", dir, "/", file)) == T){
