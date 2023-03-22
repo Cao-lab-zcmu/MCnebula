@@ -97,10 +97,10 @@ base_vis_p_nebula <-
            ...
            ){
     p <- ggraph(layout_n) + 
-      geom_edge_fan(aes(edge_width = similarity), color = "lightblue", show.legend = F) + 
-      geom_node_point(
-                      aes(
-                          size = ifelse(is.na(tanimotoSimilarity) == F, tanimotoSimilarity, 0.2),
+      geom_edge_fan(aes(edge_width = similarity),
+                    color = "lightblue", show.legend = F) + 
+      geom_node_point(aes(size = ifelse(is.na(tanimotoSimilarity) == F,
+                                        tanimotoSimilarity, 0.2),
                           fill = stringr::str_wrap(vis_class, width = 25)
                           ),
                       shape = 21

@@ -1,5 +1,7 @@
 # MCnebula
 
+**Note:** MCnebula2 is currently available, with Better compatibility and performance, please move to: <https://github.com/Cao-lab-zcmu/MCnebula2>.
+
 MCnebula has been published at <https://cao-lab-zcmu.github.io/MCnebula/>.  
 Guidance for MCnebula application:
 [MCnebula_workflow](http://htmlpreview.github.io/?https://github.com/Cao-lab-zcmu/VIgnette/blob/master/MCnebula_workflow.html).

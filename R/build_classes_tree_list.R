@@ -24,12 +24,12 @@ build_classes_tree_list <-
     root <- data[which(data$parentId==""), ]
     list <- list()
     n = 1
-    list[[n]] <- root %>% dplyr::as_tibble()
+    list[[n]] <- dplyr::as_tibble(root)
     df <- data[data$parentId %in% root$id, ]
     ## ---------------------------------------------------------------------- 
     while(nrow(df) > 0){
       n = n + 1
-      list[[n]] <- df %>% dplyr::as_tibble()
+      list[[n]] <- dplyr::as_tibble(df)
       df <- data[data$parentId %in% df$id, ]
     }
     .MCn.class_tree_list <<- list

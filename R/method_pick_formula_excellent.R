@@ -34,8 +34,11 @@ method_pick_formula_excellent <-
       meta <- data.table::data.table(key_id = key_id, dir = get_dir(key_id))
     }
     ## ---------------------------------------------------------------------- 
-    meta <- dplyr::mutate(meta, formula_dir = paste0(.MCn.sirius, "/", dir, "/", "formula_candidates.tsv"),
-                          structure_dir = paste0(.MCn.sirius, "/", dir, "/", "structure_candidates.tsv"),
+    meta <- dplyr::mutate(meta,
+                          formula_dir = paste0(.MCn.sirius, "/", dir, "/",
+                                               "formula_candidates.tsv"),
+                          structure_dir = paste0(.MCn.sirius, "/", dir, "/",
+                                                 "structure_candidates.tsv"),
                           fingerid = paste0(.MCn.sirius, "/", dir, "/", "fingerid"))
     ## ------------------------------------- 
     cat("## Method part: batch_get_formula\n")

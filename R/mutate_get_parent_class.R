@@ -39,7 +39,7 @@ get_parent_class <-
     parent <- 0
     id <- db_id[[class]]
     test <- try(db_parent[[id]], silent = T)
-    if(class(test) == "try-error")
+    if (inherits(test, "try-error"))
       return()
     while(is.null(parent) == F){
       if(parent != 0){
